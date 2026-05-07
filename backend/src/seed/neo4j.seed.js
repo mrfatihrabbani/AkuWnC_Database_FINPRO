@@ -86,14 +86,15 @@ const movies = [
   { title: 'Free Solo', year: 2018 },
   { title: 'Hereditary', year: 2018 },
   { title: 'Minding the Gap', year: 2018 },
-  { title: 'Paterno', year: 2018 },
   { title: 'Roma', year: 2018 },
   { title: 'Spider-Man: Into the Spider-Verse', year: 2018 },
   { title: 'The Ballad of Buster Scruggs', year: 2018 },
   { title: 'The Favourite', year: 2018 },
-  { title: 'The Tale', year: 2018 },
   { title: 'They Shall Not Grow Old', year: 2018 },
   { title: 'Won\'t You Be My Neighbor?', year: 2018 },
+  { title: 'One Piece Film: Red', year: 2022 },
+  { title: 'One Piece: Stampede', year: 2019},
+  { title: 'One Piece Film: Gold', year: 2016},
 ]
 
 const genres = [
@@ -175,14 +176,15 @@ const movieGenres = {
   'Free Solo': ['Adventure', 'Documentary'],
   'Hereditary': ['Drama', 'Horror', 'Mystery'],
   'Minding the Gap': ['Documentary'],
-  'Paterno': ['Drama', 'History', 'TV Movie'],
   'Roma': ['Drama'],
   'Spider-Man: Into the Spider-Verse': ['Action', 'Adventure', 'Animation', 'Comedy', 'Family', 'Science Fiction'],
   'The Ballad of Buster Scruggs': ['Comedy', 'Drama', 'Western'],
   'The Favourite': ['Comedy', 'Drama', 'History'],
-  'The Tale': ['Drama', 'Mystery', 'TV Movie'],
   'They Shall Not Grow Old': ['Documentary', 'History', 'War'],
   "Won't You Be My Neighbor?": ['Documentary'],
+  'One Piece Film: Red': ['Animation', 'Action', 'Adventure', 'Fantasy', 'Music'],
+  'One Piece: Stampede': ['Animation', 'Action', 'Adventure', 'Fantasy'],
+  'One Piece Film: Gold': ['Animation', 'Action', 'Adventure', 'Comedy', 'Fantasy'],
 }
 
 const ratings = [
