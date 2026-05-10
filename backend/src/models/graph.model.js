@@ -1,8 +1,10 @@
-import { getSession } from '../config/neo4j.js'
+import { getSession, isNeo4jConnected } from '../config/neo4j.js'
 
 class GraphModel {
   static async getFollowing(username) {
+    if (!isNeo4jConnected()) return []
     const session = getSession()
+    if (!session) return []
     try {
       const result = await session.run(
         `MATCH (:User {username: $username})-[:FOLLOWS]->(u:User)
@@ -16,7 +18,9 @@ class GraphModel {
   }
 
   static async getFollowers(username) {
+    if (!isNeo4jConnected()) return []
     const session = getSession()
+    if (!session) return []
     try {
       const result = await session.run(
         `MATCH (u:User)-[:FOLLOWS]->(:User {username: $username})
@@ -30,7 +34,9 @@ class GraphModel {
   }
 
   static async follow(fromUsername, toUsername) {
+    if (!isNeo4jConnected()) return
     const session = getSession()
+    if (!session) return
     try {
       await session.run(
         `MATCH (a:User {username: $from}), (b:User {username: $to})
@@ -43,7 +49,9 @@ class GraphModel {
   }
 
   static async unfollow(fromUsername, toUsername) {
+    if (!isNeo4jConnected()) return
     const session = getSession()
+    if (!session) return
     try {
       await session.run(
         `MATCH (:User {username: $from})-[r:FOLLOWS]->(:User {username: $to})
@@ -56,7 +64,9 @@ class GraphModel {
   }
 
   static async rateMovie(username, movieTitle, score) {
+    if (!isNeo4jConnected()) return
     const session = getSession()
+    if (!session) return
     try {
       await session.run(
         `MATCH (u:User {username: $username}), (m:Movie {title: $title})
@@ -70,7 +80,9 @@ class GraphModel {
   }
 
   static async getRecommendations(username) {
+    if (!isNeo4jConnected()) return []
     const session = getSession()
+    if (!session) return []
     try {
       const result = await session.run(
         `MATCH (me:User {username: $username})-[:RATED]->(m:Movie)<-[:RATED]-(similar:User)
@@ -87,9 +99,9 @@ class GraphModel {
         { username }
       )
       return result.records.map(r => ({
-        title:         r.get('title'),
+        title: r.get('title'),
         recommendedBy: r.get('recommendedBy').toNumber(),
-        avgScore:      r.get('avgScore'),
+        avgScore: r.get('avgScore'),
       }))
     } finally {
       await session.close()
@@ -97,7 +109,9 @@ class GraphModel {
   }
 
   static async getSimilarMovies(movieTitle) {
+    if (!isNeo4jConnected()) return []
     const session = getSession()
+    if (!session) return []
     try {
       const result = await session.run(
         `MATCH (:Movie {title: $title})-[:TAGGED]->(g:Genre)<-[:TAGGED]-(similar:Movie)
@@ -110,9 +124,9 @@ class GraphModel {
         { title: movieTitle }
       )
       return result.records.map(r => ({
-        title:        r.get('title'),
+        title: r.get('title'),
         sharedGenres: r.get('sharedGenres'),
-        overlap:      r.get('overlap').toNumber(),
+        overlap: r.get('overlap').toNumber(),
       }))
     } finally {
       await session.close()
@@ -120,7 +134,9 @@ class GraphModel {
   }
 
   static async getFriendActivity(username) {
+    if (!isNeo4jConnected()) return []
     const session = getSession()
+    if (!session) return []
     try {
       const result = await session.run(
         `MATCH (:User {username: $username})-[:FOLLOWS]->(friend:User)-[r:RATED]->(m:Movie)
@@ -131,8 +147,8 @@ class GraphModel {
       )
       return result.records.map(r => ({
         ratedBy: r.get('ratedBy'),
-        movie:   r.get('movie'),
-        score:   r.get('score'),
+        movie: r.get('movie'),
+        score: r.get('score'),
       }))
     } finally {
       await session.close()
@@ -140,7 +156,9 @@ class GraphModel {
   }
 
   static async getConnectionPath(fromUsername, toUsername) {
+    if (!isNeo4jConnected()) return null
     const session = getSession()
+    if (!session) return null
     try {
       const result = await session.run(
         `MATCH p = shortestPath(

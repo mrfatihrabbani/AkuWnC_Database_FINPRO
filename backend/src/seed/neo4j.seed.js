@@ -207,7 +207,6 @@ const ratings = [
 
 const wantsToWatch = [
   ['fatih', 'Blade Runner 2049'],
-  ['rauly', 'The Look of Silence'],
   ['ryan', 'Kubo and the Two Strings'],
   ['tester', 'Sicario'],
 ]
@@ -216,7 +215,8 @@ const follows = [
   ['fatih', 'rauly'],
   ['fatih', 'ryan'],
   ['rauly', 'fatih'],
-  ['ryan', 'tester'],
+  ['rauly', 'tester'],
+  ['ryan', 'fatih'],
   ['tester', 'rauly'],
 ]
 

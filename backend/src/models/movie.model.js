@@ -52,7 +52,7 @@ class MovieModel {
   }
 
   static async getTopRated(limit = 10) {
-    return mongoose.model('Movie').find({ totalRatings: { $gte: 2 } })
+    return mongoose.model('Movie').find({ totalRatings: { $gte: 1 } })
       .sort({ avgRating: -1 })
       .limit(limit)
   }

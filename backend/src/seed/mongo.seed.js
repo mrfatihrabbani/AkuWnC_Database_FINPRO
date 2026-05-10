@@ -162,8 +162,8 @@ async function seed() {
     const ryan   = u('ryan')
     const tester = u('tester')
 
-    await User.findByIdAndUpdate(fatih._id, { following: [rauly._id, ryan._id], followers: [tester._id] })
-    await User.findByIdAndUpdate(rauly._id, { following: [fatih._id, tester._id], followers: [fatih._id] })
+    await User.findByIdAndUpdate(fatih._id, { following: [rauly._id, ryan._id], followers: [rauly._id, ryan._id] })
+    await User.findByIdAndUpdate(rauly._id, { following: [fatih._id, tester._id], followers: [fatih._id, tester._id] })
     await User.findByIdAndUpdate(ryan._id, { following: [fatih._id], followers: [fatih._id] })
     await User.findByIdAndUpdate(tester._id, { following: [rauly._id], followers: [rauly._id] })
     console.log('Set up following relationships')
