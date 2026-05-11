@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { FunnelIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import { moviePosters } from "../lib/moviePosters";
 
 interface Movie {
   _id: string;
@@ -180,9 +179,9 @@ export default function FilmsPage() {
         {visibleMovies.map((movie) => (
           <div key={movie._id} className="group cursor-pointer">
             <div className="relative rounded-xl overflow-hidden aspect-[2/3] bg-[#2a2420] transition-transform group-hover:scale-[1.03]">
-              {moviePosters[movie.title] ? (
+              {movie.poster ? (
                 <img
-                  src={moviePosters[movie.title]}
+                  src={movie.poster}
                   alt={movie.title}
                   className="w-full h-full object-cover"
                 />

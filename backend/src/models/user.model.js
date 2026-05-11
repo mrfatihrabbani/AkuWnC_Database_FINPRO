@@ -7,6 +7,8 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     bio:      { type: String, default: '' },
     avatar:   { type: String, default: '' },
+    gender:   { type: String, default: '' },
+    favoriteGenres: [{ type: String }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },

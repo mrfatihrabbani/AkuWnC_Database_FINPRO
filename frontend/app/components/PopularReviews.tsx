@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { StarIcon, HeartIcon, ChatBubbleLeftIcon } from "@heroicons/react/24/solid";
-import { moviePosters } from "../lib/moviePosters";
 
 interface Review {
   _id: string;
@@ -58,9 +57,9 @@ export default function PopularReviews() {
           >
             <div className="flex gap-4">
               <div className="w-20 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-[#2a2420]">
-                {review.movie?.title && moviePosters[review.movie.title] ? (
+                {review.movie?.poster ? (
                   <img
-                    src={moviePosters[review.movie.title]}
+                    src={review.movie.poster}
                     alt={review.movie.title}
                     className="w-full h-full object-cover"
                   />

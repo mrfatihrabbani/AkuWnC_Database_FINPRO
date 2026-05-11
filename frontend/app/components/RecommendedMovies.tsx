@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { HeartIcon, BookmarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
-import { moviePosters } from "../lib/moviePosters";
 
 interface RecommendedMovie {
   title: string;
@@ -15,6 +14,7 @@ interface RecommendedMovie {
     director: string;
     genres: string[];
     synopsis: string;
+    poster?: string;
   };
 }
 
@@ -84,8 +84,8 @@ export default function RecommendedMovies({ currentUser }: RecommendedMoviesProp
           {recommendations.slice(0, 6).map((rec) => (
             <div key={rec.title} className="group cursor-pointer">
               <div className="relative rounded-xl overflow-hidden aspect-[2/3] bg-[#2a2420] transition-transform group-hover:scale-105">
-                {moviePosters[rec.title] ? (
-                  <img src={moviePosters[rec.title]} alt={rec.title} className="w-full h-full object-cover" />
+                {rec.movieDetails?.poster ? (
+                  <img src={rec.movieDetails.poster} alt={rec.title} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <span className="text-4xl">🎬</span>
