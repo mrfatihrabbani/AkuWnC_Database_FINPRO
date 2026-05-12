@@ -64,6 +64,8 @@ export default function Home() {
   const handleLogout = () => {
     setCurrentUser(null);
     setUserAvatar(null);
+    setActivePage("home");
+    setViewingUser(null);
     localStorage.removeItem("currentUser");
   };
 
@@ -100,7 +102,7 @@ export default function Home() {
           </main>
         )}
 
-        {activePage === "films" && <FilmsPage />}
+        {activePage === "films" && <FilmsPage currentUser={currentUser} />}
         {activePage === "profile" && currentUser && (
           <ProfilePage
             username={viewingUser || currentUser}

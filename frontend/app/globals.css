@@ -2,10 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root,
+[data-theme="dark"] {
   --bg-primary: #1c1914;
   --bg-secondary: #16130e;
   --bg-card: #2a2420;
+  --bg-hover: #3d352c;
+  --border-color: #3d352c;
   --text-primary: #ffffff;
   --text-secondary: #a89880;
   --accent-gold: #c49148;
@@ -13,9 +16,122 @@
   --accent-light: #d4a050;
 }
 
+[data-theme="light"] {
+  --bg-primary: #c8c3be;
+  --bg-secondary: #b8ada2;
+  --bg-card: #d4ccc4;
+  --bg-hover: #bfb5aa;
+  --border-color: #a89e94;
+  --text-primary: #2c2622;
+  --text-secondary: #5c534b;
+  --accent-gold: #8c7b6b;
+  --accent-mahogany: #9e8e7e;
+  --accent-light: #8c7b6b;
+}
+
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
+}
+
+/* Light mode global overrides for hardcoded Tailwind colors */
+[data-theme="light"] {
+  background-color: var(--bg-primary) !important;
+}
+
+[data-theme="light"] body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Primary backgrounds */
+[data-theme="light"] .bg-\[\#1c1914\],
+[data-theme="light"] .bg-\[\#1c1914\]\/95 {
+  background-color: #c8c3be !important;
+}
+
+/* Secondary backgrounds */
+[data-theme="light"] .bg-\[\#16130e\] {
+  background-color: #b8ada2 !important;
+}
+
+/* Card backgrounds */
+[data-theme="light"] .bg-\[\#2a2420\] {
+  background-color: #d4ccc4 !important;
+}
+
+/* Hover / tertiary backgrounds */
+[data-theme="light"] .bg-\[\#3d352c\] {
+  background-color: #bfb5aa !important;
+}
+
+[data-theme="light"] .hover\:bg-\[\#3d352c\]:hover {
+  background-color: #bfb5aa !important;
+}
+
+/* Borders */
+[data-theme="light"] .border-\[\#3d352c\] {
+  border-color: #a89e94 !important;
+}
+
+/* White text → dark brown */
+[data-theme="light"] .text-white {
+  color: #2c2622 !important;
+}
+
+/* Secondary text */
+[data-theme="light"] .text-\[\#a89880\] {
+  color: #5c534b !important;
+}
+
+/* Accent gold → warm taupe */
+[data-theme="light"] .text-\[\#c49148\] {
+  color: #8c7b6b !important;
+}
+
+[data-theme="light"] .bg-\[\#c49148\] {
+  background-color: #8c7b6b !important;
+}
+
+[data-theme="light"] .hover\:bg-\[\#a07838\]:hover {
+  background-color: #7a6b5c !important;
+}
+
+/* Accent light text */
+[data-theme="light"] .text-\[\#d4a050\] {
+  color: #8c7b6b !important;
+}
+
+[data-theme="light"] .hover\:text-\[\#d4a050\]:hover {
+  color: #7a6b5c !important;
+}
+
+/* Gradient overrides */
+[data-theme="light"] .from-\[\#c48b61\] {
+  --tw-gradient-from: #9e8e7e !important;
+}
+
+[data-theme="light"] .to-\[\#c49148\] {
+  --tw-gradient-to: #8c7b6b !important;
+}
+
+/* Focus ring */
+[data-theme="light"] .focus\:ring-\[\#c49148\]:focus {
+  --tw-ring-color: #8c7b6b !important;
+}
+
+[data-theme="light"] .focus\:border-\[\#c49148\]:focus {
+  border-color: #8c7b6b !important;
+}
+
+/* Placeholder text */
+[data-theme="light"] .placeholder-\[\#a89880\]::placeholder {
+  color: #7a7068 !important;
+}
+
+/* Sidebar icon active bg */
+[data-theme="light"] .bg-\[\#c49148\]\/10 {
+  background-color: rgba(140, 123, 107, 0.15) !important;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
