@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { FunnelIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { movieAPI } from '../config/api';
+import MovieDetailModal from './MovieDetailModal';
 
 interface Movie {
   _id: string;
@@ -20,7 +21,11 @@ interface Movie {
 
 const MOVIES_PER_PAGE = 25;
 
-export default function FilmsPage() {
+interface FilmsPageProps {
+  currentUser?: string | null;
+}
+
+export default function FilmsPage({ currentUser }: FilmsPageProps) {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [visibleCount, setVisibleCount] = useState(MOVIES_PER_PAGE);
   const [sortBy, setSortBy] = useState<"title" | "year" | "rating">("title");
@@ -28,6 +33,7 @@ export default function FilmsPage() {
   const [genres, setGenres] = useState<string[]>([]);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   useEffect(() => {
     fetchMovies();
@@ -177,7 +183,7 @@ export default function FilmsPage() {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {visibleMovies.map((movie) => (
-          <div key={movie._id} className="group cursor-pointer">
+          <div key={movie._id} className="group cursor-pointer" onClick={() => setSelectedMovie(movie)}>
             <div className="relative rounded-xl overflow-hidden aspect-[2/3] bg-[#2a2420] transition-transform group-hover:scale-[1.03]">
               {movie.poster ? (
                 <img
@@ -274,6 +280,13 @@ export default function FilmsPage() {
           </button>
         </div>
       )}
+      <MovieDetailModal
+        isOpen={!!selectedMovie}
+        onClose={() => setSelectedMovie(null)}
+        movie={selectedMovie}
+        onSelectMovie={(m) => setSelectedMovie(m)}
+        currentUser={currentUser || undefined}
+      />
     </div>
   );
 }

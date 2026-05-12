@@ -17,11 +17,9 @@ import {
 const menuItems = [
   { icon: HomeIcon, activeIcon: HomeIconSolid, label: "Home", id: "home" },
   { icon: FilmIcon, activeIcon: FilmIconSolid, label: "Films", id: "films" },
-  { icon: UserGroupIcon, label: "Members", id: "members" },
   { icon: StarIcon, label: "Reviews", id: "reviews" },
   { icon: BookmarkIcon, label: "Watchlist", id: "watchlist" },
   { icon: ChartBarIcon, label: "Stats", id: "stats" },
-  { icon: EllipsisHorizontalIcon, label: "More", id: "more" },
 ];
 
 interface SidebarProps {

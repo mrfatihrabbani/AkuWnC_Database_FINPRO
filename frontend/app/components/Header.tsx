@@ -7,6 +7,8 @@ import {
   BellIcon,
   ArrowRightOnRectangleIcon,
   UserCircleIcon,
+  MoonIcon,
+  SunIcon,
 } from "@heroicons/react/24/outline";
 import { movieAPI } from '../config/api';
 
@@ -31,7 +33,22 @@ export default function Header({ currentUser, userAvatar, pageTitle = "Home", on
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showSettings, setShowSettings] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const settingsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme") as "dark" | "light" | null;
+    const initial = saved || "dark";
+    setTheme(initial);
+    document.documentElement.setAttribute("data-theme", initial);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+  };
 
   // close dropdown on outside click
   useEffect(() => {
@@ -144,18 +161,44 @@ export default function Header({ currentUser, userAvatar, pageTitle = "Home", on
                       <ArrowRightOnRectangleIcon className="w-5 h-5" />
                       Log Out
                     </button>
+                    <div className="border-t border-[#3d352c]" />
+                    <button
+                      onClick={toggleTheme}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-[#3d352c] transition-colors"
+                    >
+                      {theme === "dark" ? (
+                        <SunIcon className="w-5 h-5 text-[#c49148]" />
+                      ) : (
+                        <MoonIcon className="w-5 h-5 text-[#a89880]" />
+                      )}
+                      {theme === "dark" ? "Orange Tabby" : "White Persian"}
+                    </button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setShowSettings(false);
-                      if (onLogin) onLogin();
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-[#3d352c] transition-colors"
-                  >
-                    <ArrowRightOnRectangleIcon className="w-5 h-5 text-[#c49148]" />
-                    Log In
-                  </button>
+                  <>
+                    <button
+                      onClick={() => {
+                        setShowSettings(false);
+                        if (onLogin) onLogin();
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-[#3d352c] transition-colors"
+                    >
+                      <ArrowRightOnRectangleIcon className="w-5 h-5 text-[#c49148]" />
+                      Log In
+                    </button>
+                    <div className="border-t border-[#3d352c]" />
+                    <button
+                      onClick={toggleTheme}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-[#3d352c] transition-colors"
+                    >
+                      {theme === "dark" ? (
+                        <SunIcon className="w-5 h-5 text-[#c49148]" />
+                      ) : (
+                        <MoonIcon className="w-5 h-5 text-[#a89880]" />
+                      )}
+                      {theme === "dark" ? "Orange Tabby" : "White Persian"}
+                    </button>
+                  </>
                 )}
               </div>
             )}
