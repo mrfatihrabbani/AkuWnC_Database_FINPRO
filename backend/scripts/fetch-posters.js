@@ -115,16 +115,23 @@ async function fetchPoster(title, year) {
 }
 
 async function main() {
-  const fs = await import('fs')
-  const path = await import('path')
-  
+  const mongoose = (await import('mongoose')).default
+  const dotenv = (await import('dotenv'))
+  dotenv.config()
+
+  await mongoose.connect(process.env.MONGO_URI)
+  console.log('Connected to MongoDB\n')
   console.log('Fetching poster URLs from TMDB...\n')
-  const results = {}
-  
+
+  let updated = 0
   for (const movie of movies) {
     const url = await fetchPoster(movie.title, movie.year)
     if (url) {
-      results[movie.title] = url
+      await mongoose.connection.db.collection('movies').updateOne(
+        { title: movie.title },
+        { $set: { poster: url } }
+      )
+      updated++
       console.log(`✓ ${movie.title}`)
     } else {
       console.log(`✗ ${movie.title} - no poster found`)
@@ -132,17 +139,8 @@ async function main() {
     await new Promise(r => setTimeout(r, 250))
   }
 
-  // build the file content
-  let content = 'export const moviePosters: Record<string, string> = {\n'
-  for (const [title, url] of Object.entries(results)) {
-    content += `  "${title}": "${url}",\n`
-  }
-  content += '};\n'
-
-  // write directly to the frontend file
-  const targetPath = path.resolve(import.meta.dirname, '../../frontend/app/lib/moviePosters.ts')
-  fs.writeFileSync(targetPath, content, 'utf8')
-  console.log(`\n Done! Wrote ${Object.keys(results).length} posters to:\n  ${targetPath}`)
+  console.log(`\nDone! Updated ${updated} movies in MongoDB.`)
+  await mongoose.disconnect()
 }
 
 main().catch(console.error)

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lepurrboxd",
+  title: "Letterboxd AkuWnC",
   description: "A movie tracking social platform",
 };
 

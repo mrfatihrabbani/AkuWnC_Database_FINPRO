@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import { login, register } from '../controllers/authController.js';
+import passport from 'passport';
+
 const router = express.Router();
-const passport = require('passport');
-const { login, register } = require('../controllers/authController');
 
 router.post('/register', register);
 router.post('/login', login);
@@ -12,4 +13,4 @@ router.get('/google/callback',
   (req, res) => res.redirect('/dashboard') 
 );
 
-module.exports = router;
+export default router;

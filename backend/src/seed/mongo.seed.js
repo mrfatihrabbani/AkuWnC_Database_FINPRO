@@ -2,16 +2,17 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 dotenv.config()
 
-import Movie from '../models/movie.model.js'
-import User from '../models/user.model.js'
-import Review from '../models/review.model.js'
-import Watchlist from '../models/watchlist.model.js'
+import Movie from '../models/models.mongodb/movie.model.js'
+import User from '../models/models.mongodb/user.model.js'
+import Review from '../models/models.mongodb/review.model.js'
+import Watchlist from '../models/models.mongodb/watchlist.model.js'
 
 const users = [
   { username: 'fatih', email: 'fatih@wncmail.com', password: 'fatih_password', bio: 'Horror, Action and sci-fi enthusiast' },
   { username: 'rauly', email: 'rauly@wncmail.com', password: 'rauly_password', bio: 'Cinema lover. Especially for documentary.' },
   { username: 'ryan', email: 'ryan@wncmail.com', password: 'ryan_password', bio: 'Huge weeb, likes animation, and action.' },
   { username: 'tester', email: 'tester@wncmail.com', password: 'tester_password', bio: 'Documentary and world cinema.' },
+  { username: 'koechengganteng', email: 'koecheng@wncmail.com', password: 'koecheng_password', bio: '' },
 ]
 
 const movies = [
@@ -157,16 +158,6 @@ async function seed() {
     await Watchlist.insertMany(watchlists)
     console.log(`Inserted ${watchlists.length} watchlist entries`)
     
-    const fatih  = u('fatih')
-    const rauly  = u('rauly')
-    const ryan   = u('ryan')
-    const tester = u('tester')
-
-    await User.findByIdAndUpdate(fatih._id, { following: [rauly._id, ryan._id], followers: [rauly._id, ryan._id] })
-    await User.findByIdAndUpdate(rauly._id, { following: [fatih._id, tester._id], followers: [fatih._id, tester._id] })
-    await User.findByIdAndUpdate(ryan._id, { following: [fatih._id], followers: [fatih._id] })
-    await User.findByIdAndUpdate(tester._id, { following: [rauly._id], followers: [rauly._id] })
-    console.log('Set up following relationships')
     console.log('\nMongoDB seed complete!')
 
   } catch (err) {

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { HeartIcon, BookmarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
-import { moviePosters } from "../lib/moviePosters";
+import { graphAPI, movieAPI } from '../config/api';
 
 interface RecommendedMovie {
   title: string;
@@ -15,6 +15,7 @@ interface RecommendedMovie {
     director: string;
     genres: string[];
     synopsis: string;
+    poster?: string;
   };
 }
 
@@ -39,17 +40,11 @@ export default function RecommendedMovies({ currentUser }: RecommendedMoviesProp
 
   const fetchRecommendations = async () => {
     try {
-      const res = await fetch(`http://localhost:3001/api/graph/recommendations/${currentUser}`);
-      const data = await res.json();
+      const { data } = await graphAPI.getRecommendations(currentUser);
 
       if (data.length > 0) {
         const titles = data.map((r: RecommendedMovie) => r.title);
-        const detailsRes = await fetch(`http://localhost:3001/api/movies/by-titles`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ titles }),
-        });
-        const details = await detailsRes.json();
+        const { data: details } = await movieAPI.getByTitles(titles);
 
         const enriched = data.map((rec: RecommendedMovie) => ({
           ...rec,
@@ -64,8 +59,7 @@ export default function RecommendedMovies({ currentUser }: RecommendedMoviesProp
 
   const fetchFriendActivity = async () => {
     try {
-      const res = await fetch(`http://localhost:3001/api/graph/friend-activity/${currentUser}`);
-      const data = await res.json();
+      const { data } = await graphAPI.getFriendActivity(currentUser);
       setFriendActivity(data.slice(0, 6));
     } catch (error) {
       console.error("Error fetching friend activity:", error);
@@ -84,8 +78,8 @@ export default function RecommendedMovies({ currentUser }: RecommendedMoviesProp
           {recommendations.slice(0, 6).map((rec) => (
             <div key={rec.title} className="group cursor-pointer">
               <div className="relative rounded-xl overflow-hidden aspect-[2/3] bg-[#2a2420] transition-transform group-hover:scale-105">
-                {moviePosters[rec.title] ? (
-                  <img src={moviePosters[rec.title]} alt={rec.title} className="w-full h-full object-cover" />
+                {rec.movieDetails?.poster ? (
+                  <img src={rec.movieDetails.poster} alt={rec.title} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <span className="text-4xl">🎬</span>

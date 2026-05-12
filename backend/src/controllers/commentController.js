@@ -1,6 +1,6 @@
-const Comment = require('../models.neo4j/comment.model');
+import Comment from '../models/models.neo4j/comment.model.js';
 
-exports.postComment = async (req, res) => {
+export const postComment = async (req, res) => {
   try {
     const { profileId, reviewId, text, rating } = req.body;
     
@@ -13,3 +13,5 @@ exports.postComment = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+

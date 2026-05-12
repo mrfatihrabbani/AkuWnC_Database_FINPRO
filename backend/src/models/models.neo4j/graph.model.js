@@ -1,4 +1,4 @@
-import { getSession, isNeo4jConnected } from '../config/neo4j.js'
+import { getSession, isNeo4jConnected } from '../../config/neo4j.js'
 
 class GraphModel {
   static async getFollowing(username) {
@@ -150,25 +150,6 @@ class GraphModel {
         movie: r.get('movie'),
         score: r.get('score'),
       }))
-    } finally {
-      await session.close()
-    }
-  }
-
-  static async getConnectionPath(fromUsername, toUsername) {
-    if (!isNeo4jConnected()) return null
-    const session = getSession()
-    if (!session) return null
-    try {
-      const result = await session.run(
-        `MATCH p = shortestPath(
-           (a:User {username: $from})-[:FOLLOWS*]-(b:User {username: $to})
-         )
-         RETURN [node IN nodes(p) | node.username] AS path`,
-        { from: fromUsername, to: toUsername }
-      )
-      if (result.records.length === 0) return null
-      return result.records[0].get('path')
     } finally {
       await session.close()
     }

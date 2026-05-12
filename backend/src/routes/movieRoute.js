@@ -1,8 +1,12 @@
-const express = require('express');
+import express from 'express';
+import { getAllMovies, getTopRatedMovies, searchMovies, getMoviesByTitles, getGenreStats } from '../controllers/movieController.js';
 const router = express.Router();
-const { getMovie, searchMovies } = require('../controllers/movieController');
 
+
+router.get('/', getAllMovies);
+router.get('/top', getTopRatedMovies);
 router.get('/search', searchMovies);
-router.get('/:id', getMovie);
+router.post('/by-titles', getMoviesByTitles);
+router.get('/genre-stats', getGenreStats);
 
-module.exports = router;
+export default router;

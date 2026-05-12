@@ -1,6 +1,6 @@
-const driver = require('/db');
+import driver from '../config/neo4j.js';
 
-exports.postReview = async (req, res) => {
+export const postReview = async (req, res) => {
   const { username, movieId, reviewText } = req.body;
   const session = driver.session();
   try {
@@ -15,3 +15,5 @@ exports.postReview = async (req, res) => {
     await session.close();
   }
 };
+
+

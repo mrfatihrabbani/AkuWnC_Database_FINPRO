@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { graphAPI, userAPI } from '../config/api';
 
 interface FriendsBarProps {
   currentUser: string;
+  onViewProfile?: (username: string) => void;
 }
 
 interface User {
@@ -13,7 +15,7 @@ interface User {
   bio?: string;
 }
 
-export default function FriendsBar({ currentUser }: FriendsBarProps) {
+export default function FriendsBar({ currentUser, onViewProfile }: FriendsBarProps) {
   const [following, setFollowing] = useState<User[]>([]);
   const [allUsers, setAllUsers] = useState<User[]>([]);
 
@@ -23,11 +25,8 @@ export default function FriendsBar({ currentUser }: FriendsBarProps) {
 
   const fetchFollowData = async () => {
     try {
-      const followingRes = await fetch(`http://localhost:3001/api/graph/following/${currentUser}`);
-      const followingUsernames = await followingRes.json();
-
-      const usersRes = await fetch(`http://localhost:3001/api/users/popular`);
-      const users = await usersRes.json();
+      const { data: followingUsernames } = await graphAPI.getFollowing(currentUser);
+      const { data: users } = await userAPI.getPopular();
 
       setFollowing(users.filter((u: User) => followingUsernames.includes(u.username)));
       setAllUsers(users);
@@ -38,11 +37,7 @@ export default function FriendsBar({ currentUser }: FriendsBarProps) {
 
   const handleFollow = async (targetUser: string) => {
     try {
-      await fetch(`http://localhost:3001/api/graph/follow`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ from: currentUser, to: targetUser }),
-      });
+      await graphAPI.follow(currentUser, targetUser);
       fetchFollowData();
     } catch (error) {
       console.error("Error following user:", error);
@@ -70,12 +65,17 @@ export default function FriendsBar({ currentUser }: FriendsBarProps) {
           <div
             key={user.username}
             className="flex flex-col items-center gap-2 flex-shrink-0 cursor-pointer group"
+            onClick={() => onViewProfile?.(user.username)}
           >
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#c48b61] to-[#c49148] p-0.5">
-              <div className="w-full h-full rounded-full bg-[#16130e] flex items-center justify-center">
-                <span className="text-white font-bold text-xl">
-                  {user.username[0].toUpperCase()}
-                </span>
+              <div className="w-full h-full rounded-full bg-[#16130e] flex items-center justify-center overflow-hidden">
+                {user.avatar ? (
+                  <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-white font-bold text-xl">
+                    {user.username[0].toUpperCase()}
+                  </span>
+                )}
               </div>
             </div>
             <span className="text-xs text-[#a89880] group-hover:text-white transition-colors truncate max-w-[70px]">
@@ -90,12 +90,16 @@ export default function FriendsBar({ currentUser }: FriendsBarProps) {
             <div
               key={user.username}
               className="flex flex-col items-center gap-2 flex-shrink-0 cursor-pointer group"
-              onClick={() => handleFollow(user.username)}
+              onClick={() => onViewProfile?.(user.username)}
             >
-              <div className="w-16 h-16 rounded-full bg-[#3d352c] flex items-center justify-center relative">
-                <span className="text-[#a89880] font-bold text-xl group-hover:text-white">
-                  {user.username[0].toUpperCase()}
-                </span>
+              <div className="w-16 h-16 rounded-full bg-[#3d352c] flex items-center justify-center relative overflow-hidden">
+                {user.avatar ? (
+                  <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-[#a89880] font-bold text-xl group-hover:text-white">
+                    {user.username[0].toUpperCase()}
+                  </span>
+                )}
                 <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#c49148] rounded-full flex items-center justify-center">
                   <PlusIcon className="w-3 h-3 text-white" />
                 </div>

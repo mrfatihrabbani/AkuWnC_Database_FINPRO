@@ -1,6 +1,6 @@
-const { formatDistanceToNow } = require('date-fns'); 
+import { formatDistanceToNow } from 'date-fns';
 
-exports.formatRelativeDate = (neo4jDate) => {
+export const formatRelativeDate = (neo4jDate) => {
     const jsDate = new Date(
         neo4jDate.year.low,
         neo4jDate.month.low - 1,

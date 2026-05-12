@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { StarIcon, HeartIcon, ChatBubbleLeftIcon } from "@heroicons/react/24/solid";
-import { moviePosters } from "../lib/moviePosters";
+import { userAPI } from '../config/api';
 
 interface Review {
   _id: string;
@@ -23,8 +23,7 @@ export default function PopularReviews() {
 
   const fetchReviews = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/reviews/recent");
-      const data = await res.json();
+      const { data } = await userAPI.getRecentReviews();
       setReviews(data);
     } catch (error) {
       console.error("Error fetching reviews:", error);
@@ -58,9 +57,9 @@ export default function PopularReviews() {
           >
             <div className="flex gap-4">
               <div className="w-20 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-[#2a2420]">
-                {review.movie?.title && moviePosters[review.movie.title] ? (
+                {review.movie?.poster ? (
                   <img
-                    src={moviePosters[review.movie.title]}
+                    src={review.movie.poster}
                     alt={review.movie.title}
                     className="w-full h-full object-cover"
                   />

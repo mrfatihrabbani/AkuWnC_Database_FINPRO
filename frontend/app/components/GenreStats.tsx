@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { movieAPI } from '../config/api';
 
 interface GenreStat {
   _id: string;
@@ -17,8 +18,7 @@ export default function GenreStats() {
 
   const fetchGenreStats = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/movies/genre-stats");
-      const data = await res.json();
+      const { data } = await movieAPI.getGenreStats();
       setGenreStats(data.slice(0, 8));
     } catch (error) {
       console.error("Error fetching genre stats:", error);

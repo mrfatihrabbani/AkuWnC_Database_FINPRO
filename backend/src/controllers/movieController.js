@@ -1,17 +1,50 @@
-const driver = require('../db');
+import Movie from '../models/models.mongodb/movie.model.js';
 
-exports.searchMovies = async (req, res) => {
-  const { title } = req.query;
-  const session = driver.session();
+export const getAllMovies = async (req, res) => {
   try {
-    const result = await session.run(
-      `MATCH (m:Movie) WHERE m.title CONTAINS $title 
-       RETURN m LIMIT 10`,
-      { title }
-    );
-    const movies = result.records.map(rec => rec.get('m').properties);
+    const movies = await Movie.find().sort({ title: 1 });
     res.json(movies);
-  } finally {
-    await session.close();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getTopRatedMovies = async (req, res) => {
+  try {
+    const movies = await Movie.getTopRated(10);
+    res.json(movies);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const searchMovies = async (req, res) => {
+  try {
+    const q = req.query.q;
+    if (!q) return res.json([]);
+    const movies = await Movie.search(q);
+    res.json(movies);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getMoviesByTitles = async (req, res) => {
+  try {
+    const { titles } = req.body;
+    if (!titles || !Array.isArray(titles)) return res.json([]);
+    const movies = await Movie.getManyByTitles(titles);
+    res.json(movies);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getGenreStats = async (req, res) => {
+  try {
+    const stats = await Movie.avgRatingByGenre();
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

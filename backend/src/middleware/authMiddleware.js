@@ -1,6 +1,6 @@
-const { verifyToken } = require('./tokenService');
+import { verifyToken } from './tokenService.js';
 
-module.exports = (req, res, next) => {
+const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
 
   if (!token) {
@@ -15,3 +15,5 @@ module.exports = (req, res, next) => {
     res.status(401).json({ message: "Token is not valid" });
   }
 };
+
+export default authMiddleware;

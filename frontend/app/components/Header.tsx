@@ -8,7 +8,7 @@ import {
   ArrowRightOnRectangleIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { moviePosters } from "../lib/moviePosters";
+import { movieAPI } from '../config/api';
 
 interface SearchResult {
   _id: string;
@@ -20,13 +20,14 @@ interface SearchResult {
 
 interface HeaderProps {
   currentUser: string | null;
+  userAvatar?: string | null;
   pageTitle?: string;
   onNavigate?: (page: string) => void;
   onLogin?: () => void;
   onLogout?: () => void;
 }
 
-export default function Header({ currentUser, pageTitle = "Home", onNavigate, onLogin, onLogout }: HeaderProps) {
+export default function Header({ currentUser, userAvatar, pageTitle = "Home", onNavigate, onLogin, onLogout }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showSettings, setShowSettings] = useState(false);
@@ -51,8 +52,7 @@ export default function Header({ currentUser, pageTitle = "Home", onNavigate, on
     }
 
     try {
-      const res = await fetch(`http://localhost:3001/api/movies/search?q=${encodeURIComponent(query)}`);
-      const data = await res.json();
+      const { data } = await movieAPI.search(query);
       setSearchResults(data.slice(0, 5));
     } catch (error) {
       console.error("Search error:", error);
@@ -91,9 +91,9 @@ export default function Header({ currentUser, pageTitle = "Home", onNavigate, on
                   className="flex items-center gap-3 p-3 hover:bg-[#3d352c] cursor-pointer"
                 >
                   <div className="w-10 h-14 bg-[#16130e] rounded overflow-hidden flex-shrink-0">
-                    {moviePosters[movie.title] ? (
+                    {movie.poster ? (
                       <img
-                        src={moviePosters[movie.title]}
+                        src={movie.poster}
                         alt={movie.title}
                         className="w-full h-full object-cover"
                       />
@@ -124,7 +124,10 @@ export default function Header({ currentUser, pageTitle = "Home", onNavigate, on
                 {currentUser ? (
                   <>
                     <button
-                      onClick={() => setShowSettings(false)}
+                      onClick={() => {
+                        setShowSettings(false);
+                        if (onNavigate) onNavigate("profile");
+                      }}
                       className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-[#3d352c] transition-colors"
                     >
                       <UserCircleIcon className="w-5 h-5 text-[#a89880]" />
@@ -167,8 +170,12 @@ export default function Header({ currentUser, pageTitle = "Home", onNavigate, on
 
           {currentUser ? (
             <div className="flex items-center gap-3 bg-[#2a2420] rounded-full py-2 px-4">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#c48b61] to-[#c49148] flex items-center justify-center">
-                <span className="text-white font-bold text-sm">{currentUser[0].toUpperCase()}</span>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#c48b61] to-[#c49148] flex items-center justify-center overflow-hidden">
+                {userAvatar ? (
+                  <img src={userAvatar} alt={currentUser} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-white font-bold text-sm">{currentUser[0].toUpperCase()}</span>
+                )}
               </div>
               <span className="text-white font-medium capitalize">{currentUser}</span>
             </div>

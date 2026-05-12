@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { StarIcon } from "@heroicons/react/24/solid";
-import { moviePosters } from "../lib/moviePosters";
+import { movieAPI } from '../config/api';
 
 interface Movie {
   _id: string;
@@ -26,8 +26,7 @@ export default function StandoutMovies() {
 
   const fetchTopMovies = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/movies/top");
-      const data = await res.json();
+      const { data } = await movieAPI.getTopRated();
       setMovies(data);
       if (data.length > 0) {
         setSelectedMovie(data[0]);
@@ -47,9 +46,9 @@ export default function StandoutMovies() {
       {selectedMovie && (
         <div className="relative rounded-2xl overflow-hidden mb-6 h-64 bg-gradient-to-r from-[#2a2420] to-[#16130e]">
           <div className="absolute inset-0 bg-gradient-to-r from-[#1c1914] via-transparent to-transparent z-10" />
-          {moviePosters[selectedMovie.title] && (
+          {selectedMovie.poster && (
             <img
-              src={moviePosters[selectedMovie.title]}
+              src={selectedMovie.poster}
               alt={selectedMovie.title}
               className="absolute right-0 top-0 h-full w-1/2 object-cover opacity-50"
             />
@@ -90,8 +89,8 @@ export default function StandoutMovies() {
             }`}
           >
             <div className="relative rounded-xl overflow-hidden aspect-[2/3] bg-[#2a2420]">
-              {moviePosters[movie.title] ? (
-                <img src={moviePosters[movie.title]} alt={movie.title} className="w-full h-full object-cover" />
+              {movie.poster ? (
+                <img src={movie.poster} alt={movie.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <span className="text-4xl text-[#a89880]">🎬</span>

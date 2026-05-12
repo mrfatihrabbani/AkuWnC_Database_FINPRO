@@ -1,4 +1,4 @@
-exports.sendSuccess = (res, data, message = "Success", statusCode = 200) => {
+export const sendSuccess = (res, data, message = "Success", statusCode = 200) => {
     return res.status(statusCode).json({
         success: true,
         message,
@@ -6,7 +6,7 @@ exports.sendSuccess = (res, data, message = "Success", statusCode = 200) => {
     });
 };
 
-exports.sendError = (res, error, statusCode = 500) => {
+export const sendError = (res, error, statusCode = 500) => {
     return res.status(statusCode).json({
         success: false,
         error: error.message || error || "Internal Server Error"

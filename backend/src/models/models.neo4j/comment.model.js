@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const driver = require('../config/neo4j.js');
+import driver from '../../config/neo4j.js';
 
 class Comment {
   constructor(text, profileId, reviewId, ratingValue = null) {
@@ -58,4 +58,4 @@ class Comment {
   }
 }
 
-module.exports = Comment;
+export default Comment;
