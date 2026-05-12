@@ -1,5 +1,14 @@
+<<<<<<< HEAD:backend/src/controllers/movienseriesController.js
 import Movie from '../models/models.mongodb/movienseries.model.js';
 
+=======
+import Content from '../models.mongodb/movienseries.model.js';
+import GraphModel from '../models.neo4j/graph.model.js';
+
+ // Search (Movies or Series)
+ // URL: /api/content/search?q=interstellar&type=movie
+ 
+>>>>>>> f7d4fe76e445125d1bab81c53a7b95f65434bbb0:AkuWnC_Database_FINPRO-main/backend/src/controller/movienseriesController.js
 export const searchContent = async (req, res) => {
   try {
     const { q, type } = req.query; // type is optional ('movie' or 'series')
@@ -173,4 +182,9 @@ export const getSimilarItems = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+<<<<<<< HEAD:backend/src/controllers/movienseriesController.js
 };
+=======
+};
+
+>>>>>>> f7d4fe76e445125d1bab81c53a7b95f65434bbb0:AkuWnC_Database_FINPRO-main/backend/src/controller/movienseriesController.js
