@@ -1,12 +1,26 @@
 import express from 'express';
-import authMiddleware from '../middleware/authMiddleware.js';
-import { postReview, getReviewDetails } from '../controllers/reviewController.js';
-import { postComment } from '../controllers/commentController.js';
+import { 
+  createReview, 
+  handleToggleLike, 
+  getContentReviews, 
+  getPopular, 
+  getMyReviews 
+} from '../controllers/reviewController.js';
+import { protect } from '../middleware/authMiddleware.js'; // Hypothetical auth guard
 
 const router = express.Router();
 
-router.get('/:reviewId', getReviewDetails);
-router.post('/:reviewId/comment', authMiddleware, postComment);
-router.post('/submit', authMiddleware, postReview);
+
+// PUBLIC ROUTES
+// Fetch popular reviews for the landing page
+router.get('/popular', getPopular);
+
+// Fetch reviews for a specific movie or series
+router.get('/content/:contentId', getContentReviews);
+
+// PROTECTED ROUTES (Require Login)
+router.post('/', protect, createReview);
+router.post('/:id/like', protect, handleToggleLike);
+router.get('/me', protect, getMyReviews);
 
 export default router;

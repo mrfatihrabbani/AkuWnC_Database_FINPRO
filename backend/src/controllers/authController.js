@@ -1,41 +1,46 @@
 import User from '../models/models.mongodb/user.model.js';
 
-export const login = async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password required' });
-    }
-
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid username or password' });
-    }
-
-    if (user.password !== password) {
-      return res.status(401).json({ error: 'Invalid username or password' });
-    }
-
-    res.json({ username: user.username, email: user.email, bio: user.bio });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
+// Register Controller
 export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    if (!username || !email || !password) {
-      return res.status(400).json({ error: 'All fields are required' });
-    }
+    const newUser = await User.registerUser({
+      username,
+      email,
+      password
+    });
 
-    const existing = await User.findOne({ $or: [{ username }, { email }] });
-    if (existing) {
-      return res.status(409).json({ error: 'Username or email already taken' });
-    }
+    res.status(201).json({ 
+      message: "User created", 
+      userId: newUser._id 
+    });
+  } catch (error) {
+    // Handled duplicate keys or validation errors from MongoDB
+    res.status(400).json({ error: error.message });
+  }
+};
 
-    const user = await User.create({ username, email, password });
-    res.status(201).json({ username: user.username, email: user.email });
+
+//  Logic: Uses User.findByEmail (static) * and user.comparePassword (instance method).
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Use the model's static method to find the user
+    const user = await User.findByEmail(email);
+
+    // Check if user exists and use the model's instance method to verify password
+    if (user && (await user.comparePassword(password))) {
+      res.status(200).json({ 
+        message: "Login successful", 
+        user: { 
+          username: user.username, 
+          id: user._id 
+        } 
+      });
+    } else {
+      res.status(401).json({ message: "Invalid credentials" });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

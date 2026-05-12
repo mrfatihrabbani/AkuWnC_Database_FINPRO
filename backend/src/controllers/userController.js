@@ -125,4 +125,22 @@ export const getPopularUsers = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+
+
+};
+
+// Toggle User Theme Preference
+// PUT /api/users/theme
+export const updateTheme = async (req, res) => {
+  try {
+    // req.user.id comes from auth middleware
+    const newTheme = await User.toggleTheme(req.user.id);
+    
+    res.status(200).json({ 
+      message: `Theme switched to ${newTheme} mode`, 
+      theme: newTheme 
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
