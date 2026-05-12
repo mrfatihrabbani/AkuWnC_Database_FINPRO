@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import bcrypt from 'bcryptjs'
 
 const userSchema = new mongoose.Schema(
   {
@@ -13,7 +14,36 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next()
+  try {
+    const salt = await bcrypt.genSalt(10)
+    this.password = await bcrypt.hash(this.password, salt)
+    next()
+  } catch (err) {
+    next(err)
+  }
+})
+
 class UserModel {
+  // AUTH METHODS
+  // Static method to register a user
+  static async registerUser(userData) {
+    return await this.create(userData)
+  }
+
+  // find user by email for login 
+  static async findByEmail(email) {
+    return await this.findOne({ email })
+  }
+
+// User.comparePassword
+  async comparePassword(candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password)
+  }
+
+
+  //PROFILE METHODS
   static async getProfile(username) {
     return mongoose.model('User').findOne({ username })
       .select('-password')
@@ -24,23 +54,17 @@ class UserModel {
       .select('username bio avatar')
   }
 
-  static async followUser(currentUserId, targetUserId) {
-    await mongoose.model('User').findByIdAndUpdate(currentUserId, {
-      $addToSet: { following: targetUserId }
-    })
-    await mongoose.model('User').findByIdAndUpdate(targetUserId, {
-      $addToSet: { followers: currentUserId }
-    })
+  // Toggle between Oscars and Nature mode
+  static async toggleTheme(userId) {
+    const user = await this.findById(userId);
+    if (!user) throw new Error("User not found");
+
+    // Simple toggle logic
+    user.theme = user.theme === 'oscars' ? 'nature' : 'oscars';
+    await user.save();
+    return user.theme;
   }
 
-  static async unfollowUser(currentUserId, targetUserId) {
-    await mongoose.model('User').findByIdAndUpdate(currentUserId, {
-      $pull: { following: targetUserId }
-    })
-    await mongoose.model('User').findByIdAndUpdate(targetUserId, {
-      $pull: { followers: currentUserId }
-    })
-  }
 }
 
 userSchema.loadClass(UserModel)

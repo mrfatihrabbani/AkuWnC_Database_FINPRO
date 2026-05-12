@@ -63,43 +63,48 @@ class GraphModel {
     }
   }
 
-  static async rateMovie(username, movieTitle, score) {
+  
+   // rateContent (both Movies and Series)
+  static async rateContent(username, contentTitle, score, contentType) {
     if (!isNeo4jConnected()) return
     const session = getSession()
     if (!session) return
     try {
       await session.run(
-        `MATCH (u:User {username: $username}), (m:Movie {title: $title})
+        `MATCH (u:User {username: $username}), (m:${contentType} {title: $title})
          MERGE (u)-[r:RATED]->(m)
          SET r.score = $score`,
-        { username, title: movieTitle, score }
+        { username, title: contentTitle, score }
       )
     } finally {
       await session.close()
     }
   }
 
+  // getRecommendations
   static async getRecommendations(username) {
     if (!isNeo4jConnected()) return []
     const session = getSession()
     if (!session) return []
     try {
+      // Using 'Content' as a base label for both Movies and Series
       const result = await session.run(
-        `MATCH (me:User {username: $username})-[:RATED]->(m:Movie)<-[:RATED]-(similar:User)
+        `MATCH (me:User {username: $username})-[:RATED]->(m:Content)<-[:RATED]-(similar:User)
          WHERE similar.username <> $username
-         MATCH (similar)-[r:RATED]->(rec:Movie)
+         MATCH (similar)-[r:RATED]->(rec:Content)
          WHERE NOT (me)-[:RATED]->(rec)
-           AND NOT (me)-[:WANTS_TO_WATCH]->(rec)
            AND r.score >= 4.0
-         RETURN rec.title AS title,
+         RETURN rec.title AS title, 
+                labels(rec) AS types,
                 COUNT(similar) AS recommendedBy,
-                AVG(r.score)   AS avgScore
+                AVG(r.score) AS avgScore
          ORDER BY recommendedBy DESC, avgScore DESC
          LIMIT 10`,
         { username }
       )
       return result.records.map(r => ({
         title: r.get('title'),
+        type: r.get('types').filter(l => l !== 'Content')[0], // Returns 'Movie' or 'Series'
         recommendedBy: r.get('recommendedBy').toNumber(),
         avgScore: r.get('avgScore'),
       }))
@@ -108,23 +113,26 @@ class GraphModel {
     }
   }
 
-  static async getSimilarMovies(movieTitle) {
+   // getSimilarContent
+  static async getSimilarContent(title, contentType) {
     if (!isNeo4jConnected()) return []
     const session = getSession()
     if (!session) return []
     try {
       const result = await session.run(
-        `MATCH (:Movie {title: $title})-[:TAGGED]->(g:Genre)<-[:TAGGED]-(similar:Movie)
+        `MATCH (target:${contentType} {title: $title})-[:TAGGED]->(g:Genre)<-[:TAGGED]-(similar:Content)
          WHERE similar.title <> $title
          RETURN similar.title AS title,
+                labels(similar) AS types,
                 COLLECT(g.name) AS sharedGenres,
                 COUNT(g) AS overlap
          ORDER BY overlap DESC
          LIMIT 8`,
-        { title: movieTitle }
+        { title }
       )
       return result.records.map(r => ({
         title: r.get('title'),
+        type: r.get('types').filter(l => l !== 'Content')[0],
         sharedGenres: r.get('sharedGenres'),
         overlap: r.get('overlap').toNumber(),
       }))
@@ -155,24 +163,7 @@ class GraphModel {
     }
   }
 
-  static async getConnectionPath(fromUsername, toUsername) {
-    if (!isNeo4jConnected()) return null
-    const session = getSession()
-    if (!session) return null
-    try {
-      const result = await session.run(
-        `MATCH p = shortestPath(
-           (a:User {username: $from})-[:FOLLOWS*]-(b:User {username: $to})
-         )
-         RETURN [node IN nodes(p) | node.username] AS path`,
-        { from: fromUsername, to: toUsername }
-      )
-      if (result.records.length === 0) return null
-      return result.records[0].get('path')
-    } finally {
-      await session.close()
-    }
-  }
+  
 }
 
 export default GraphModel
