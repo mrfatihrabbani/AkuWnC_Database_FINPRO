@@ -1,4 +1,4 @@
-import User from '../models/models.mongodb/user.model.js';
+import User from '../models/user.model.js';
 
 // Register Controller
 export const register = async (req, res) => {

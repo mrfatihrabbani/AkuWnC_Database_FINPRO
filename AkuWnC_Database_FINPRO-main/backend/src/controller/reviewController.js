@@ -1,4 +1,5 @@
-import driver from '../config/neo4j.js';
+import Review from '../models/review.model.js';
+import Content from '../models/movie.model.js'; // To trigger recalcRating
 
 /**
  * Create a new review
@@ -75,4 +76,14 @@ export const getPopular = async (req, res) => {
   }
 };
 
-
+/**
+ * Get User's own reviews
+ */
+export const getMyReviews = async (req, res) => {
+  try {
+    const reviews = await Review.getByUser(req.user.id);
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
