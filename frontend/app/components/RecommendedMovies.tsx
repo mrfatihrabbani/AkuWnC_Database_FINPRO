@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { HeartIcon, BookmarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
-import { graphAPI, movieAPI } from '../config/api';
+import { graphAPI, movieAPI, contentAPI } from '../config/api';
 
 interface RecommendedMovie {
   title: string;
@@ -40,7 +40,8 @@ export default function RecommendedMovies({ currentUser }: RecommendedMoviesProp
 
   const fetchRecommendations = async () => {
     try {
-      const { data } = await graphAPI.getRecommendations(currentUser);
+      // try content api first
+      const { data } = await contentAPI.getRecommendations(currentUser);
 
       if (data.length > 0) {
         const titles = data.map((r: RecommendedMovie) => r.title);
@@ -52,8 +53,22 @@ export default function RecommendedMovies({ currentUser }: RecommendedMoviesProp
         }));
         setRecommendations(enriched);
       }
-    } catch (error) {
-      console.error("Error fetching recommendations:", error);
+    } catch {
+      // fallback to graph api
+      try {
+        const { data } = await graphAPI.getRecommendations(currentUser);
+        if (data.length > 0) {
+          const titles = data.map((r: RecommendedMovie) => r.title);
+          const { data: details } = await movieAPI.getByTitles(titles);
+          const enriched = data.map((rec: RecommendedMovie) => ({
+            ...rec,
+            movieDetails: details.find((d: any) => d.title === rec.title),
+          }));
+          setRecommendations(enriched);
+        }
+      } catch (error) {
+        console.error("Error fetching recommendations:", error);
+      }
     }
   };
 

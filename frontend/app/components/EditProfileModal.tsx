@@ -120,7 +120,7 @@ export default function EditProfileModal({
 
         <h2 className="text-2xl font-bold text-white mb-6">Edit Profile</h2>
 
-        {/* Avatar Upload */}
+        {/* avatar upload */}
         <div className="mb-6">
           <label className="text-[#a89880] text-sm block mb-2">Profile Photo</label>
           <div
@@ -163,7 +163,7 @@ export default function EditProfileModal({
           </div>
         </div>
 
-        {/* Bio */}
+        {/* bio */}
         <div className="mb-6">
           <label className="text-[#a89880] text-sm block mb-2">Bio</label>
           <textarea
@@ -175,7 +175,7 @@ export default function EditProfileModal({
           />
         </div>
 
-        {/* Gender */}
+        {/* gender */}
         <div className="mb-6">
           <label className="text-[#a89880] text-sm block mb-2">Gender</label>
           <div className="flex gap-2 mb-3">
@@ -217,7 +217,7 @@ export default function EditProfileModal({
           )}
         </div>
 
-        {/* Favorite Genres */}
+        {/* favorite genres */}
         <div className="mb-6">
           <label className="text-[#a89880] text-sm block mb-2">
             Favorite Genres
@@ -244,7 +244,7 @@ export default function EditProfileModal({
 
         {error && <p className="text-[#a04030] text-sm text-center mb-4">{error}</p>}
 
-        {/* Save */}
+        {/* save */}
         <div className="flex gap-3">
           <button
             onClick={onClose}

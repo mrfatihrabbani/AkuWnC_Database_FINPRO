@@ -1,4 +1,5 @@
-import Notification from '../models/notification.model.js';
+import Notification from '../models/models.mongodb/notification.model.js';
+import User from '../models/models.mongodb/user.model.js';
 
 // Function 1: Connects to Follower Logic
 export const notifyNewFollower = async (targetUserId, followerName, followerId) => {
@@ -30,12 +31,35 @@ export const notifyTagInReview = async (taggedUserId, authorName, reviewId) => {
   });
 };
 
-// Request Handler for the Header "Ring" Button
+// Request Handler for the Header "Ring" Button (JWT-based)
 export const getHeaderNotifications = async (req, res) => {
   try {
-    // Calling the MongoDB query defined in the Model class
     const notifications = await Notification.getLatestForHeader(req.user.id);
     res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Username-based handler (works with current auth system)
+export const getNotificationsByUsername = async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    const notifications = await Notification.getLatestForHeader(user._id);
+    res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Clear all notifications for a user
+export const clearNotificationsByUsername = async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    await Notification.clearAll(user._id);
+    res.status(200).json({ message: 'Notifications cleared' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

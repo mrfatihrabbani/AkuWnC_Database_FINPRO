@@ -8,42 +8,35 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     bio:      { type: String, default: '' },
     avatar:   { type: String, default: '' },
+    gender:   { type: String, default: '' },
+    favoriteGenres: [{ type: String }],
+    theme:    { type: String, default: 'oscars' },
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true }
 )
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next()
-  try {
-    const salt = await bcrypt.genSalt(10)
-    this.password = await bcrypt.hash(this.password, salt)
-    next()
-  } catch (err) {
-    next(err)
-  }
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return
+  const salt = await bcrypt.genSalt(10)
+  this.password = await bcrypt.hash(this.password, salt)
 })
 
 class UserModel {
-  // AUTH METHODS
-  // Static method to register a user
   static async registerUser(userData) {
     return await this.create(userData)
   }
 
-  // find user by email for login 
   static async findByEmail(email) {
     return await this.findOne({ email })
   }
 
-// User.comparePassword
   async comparePassword(candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password)
   }
 
 
-  //PROFILE METHODS
   static async getProfile(username) {
     return mongoose.model('User').findOne({ username })
       .select('-password')
@@ -54,12 +47,9 @@ class UserModel {
       .select('username bio avatar')
   }
 
-  // Toggle between Oscars and Nature mode
   static async toggleTheme(userId) {
     const user = await this.findById(userId);
     if (!user) throw new Error("User not found");
-
-    // Simple toggle logic
     user.theme = user.theme === 'oscars' ? 'nature' : 'oscars';
     await user.save();
     return user.theme;

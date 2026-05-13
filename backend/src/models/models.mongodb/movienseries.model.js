@@ -126,57 +126,7 @@ class ContentModel {
   }
 
 
-static async getPaginated({ type, genre, sortBy, limit = 12 }) {
-  const query = {};
-  if (type) query.type = type;
-  if (genre && genre !== 'All') query.genres = genre;
-
-  let sortQuery = {};
-  switch (sortBy) {
-    case 'year':
-      sortQuery = { year: -1 };
-      break;
-    case 'rating':
-      sortQuery = { avgRating: -1 };
-      break;
-    case 'title':
-    default:
-      sortQuery = { title: 1 };
-  }
-
-  return mongoose.model('Content').find(query)
-    .sort(sortQuery)
-    .limit(Number(limit));
-}
-
-  // sortedAndFiltered
-  // Fetches data already sorted and filtered by the DB
-  static async getSortedAndFiltered({ type, genre, sortBy, limit = 100 }) {
-    let query = {};
-    if (type) query.type = type;
-    if (genre && genre !== 'All') query.genres = genre;
-
-    let sortOptions = {};
-    switch (sortBy) {
-      case 'year':
-        sortOptions = { year: -1 };
-        break;
-      case 'rating':
-        sortOptions = { avgRating: -1 };
-        break;
-      case 'title':
-      default:
-        sortOptions = { title: 1 };
-    }
-
-    return mongoose.model('Content')
-      .find(query)
-      .sort(sortOptions)
-      .limit(limit);
-  }
-
-  
-  // handleSeeMore 
+  // Paginated browse with filters
   static async getPaginated({ type, genre, sortBy, page = 1, perPage = 20 }) {
     let query = {};
     if (type) query.type = type;

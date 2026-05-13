@@ -162,11 +162,6 @@ class GraphModel {
       await session.close()
     }
   }
-<<<<<<< HEAD:backend/src/models/models.neo4j/graph.model.js
-=======
-
-  
->>>>>>> f7d4fe76e445125d1bab81c53a7b95f65434bbb0:AkuWnC_Database_FINPRO-main/backend/src/models.neo4j/graph.model.js
 }
 
 export default GraphModel
