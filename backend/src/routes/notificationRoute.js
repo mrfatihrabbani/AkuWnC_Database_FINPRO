@@ -1,9 +1,9 @@
 import express from 'express';
-import { getHeaderNotifications } from '../controllers/notificationController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { getNotificationsByUsername, clearNotificationsByUsername } from '../controllers/notificationController.js';
 
 const router = express.Router();
 
-router.get('/header-sync', protect, getHeaderNotifications);
+router.get('/:username', getNotificationsByUsername);
+router.delete('/:username/clear', clearNotificationsByUsername);
 
 export default router;

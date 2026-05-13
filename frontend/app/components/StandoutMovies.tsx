@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { StarIcon } from "@heroicons/react/24/solid";
-import { movieAPI } from '../config/api';
+import { contentAPI } from '../config/api';
 
 interface Movie {
   _id: string;
@@ -26,7 +26,7 @@ export default function StandoutMovies() {
 
   const fetchTopMovies = async () => {
     try {
-      const { data } = await movieAPI.getTopRated();
+      const { data } = await contentAPI.getTopRated('movie', 10);
       setMovies(data);
       if (data.length > 0) {
         setSelectedMovie(data[0]);

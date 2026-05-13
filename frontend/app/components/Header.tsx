@@ -10,11 +10,20 @@ import {
   MoonIcon,
   SunIcon,
 } from "@heroicons/react/24/outline";
-import { movieAPI } from '../config/api';
+import { BellAlertIcon } from "@heroicons/react/24/solid";
+import { contentAPI, notificationAPI } from '../config/api';
+
+interface Notification {
+  _id: string;
+  type: 'NEW_FOLLOWER' | 'RECOMMENDATION' | 'TAGGED';
+  message: string;
+  createdAt: string;
+}
 
 interface SearchResult {
   _id: string;
   title: string;
+  type: string;
   year: number;
   director: string;
   poster?: string;
@@ -25,16 +34,20 @@ interface HeaderProps {
   userAvatar?: string | null;
   pageTitle?: string;
   onNavigate?: (page: string) => void;
+  onSelectMovie?: (movie: SearchResult) => void;
   onLogin?: () => void;
   onLogout?: () => void;
 }
 
-export default function Header({ currentUser, userAvatar, pageTitle = "Home", onNavigate, onLogin, onLogout }: HeaderProps) {
+export default function Header({ currentUser, userAvatar, pageTitle = "Home", onNavigate, onSelectMovie, onLogin, onLogout }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showSettings, setShowSettings] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const settingsRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("theme") as "dark" | "light" | null;
@@ -50,16 +63,62 @@ export default function Header({ currentUser, userAvatar, pageTitle = "Home", on
     localStorage.setItem("theme", next);
   };
 
-  // close dropdown on outside click
+  // close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
         setShowSettings(false);
       }
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setShowNotifications(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // fetch notifications when bell is opened
+  const fetchNotifications = async () => {
+    if (!currentUser) return;
+    try {
+      const { data } = await notificationAPI.getForUser(currentUser);
+      setNotifications(data);
+    } catch { /* ignore */ }
+  };
+
+  const handleBellClick = () => {
+    if (!currentUser) return;
+    const next = !showNotifications;
+    setShowNotifications(next);
+    if (next) fetchNotifications();
+  };
+
+  const handleClearNotifications = async () => {
+    if (!currentUser) return;
+    try {
+      await notificationAPI.clearAll(currentUser);
+      setNotifications([]);
+    } catch { /* ignore */ }
+  };
+
+  const getNotifIcon = (type: string) => {
+    switch (type) {
+      case 'NEW_FOLLOWER': return '👤';
+      case 'RECOMMENDATION': return '🎬';
+      case 'TAGGED': return '🏷️';
+      default: return '🔔';
+    }
+  };
+
+  const timeAgo = (dateStr: string) => {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  };
 
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
@@ -69,17 +128,18 @@ export default function Header({ currentUser, userAvatar, pageTitle = "Home", on
     }
 
     try {
-      const { data } = await movieAPI.search(query);
+      const { data } = await contentAPI.search(query);
       setSearchResults(data.slice(0, 5));
     } catch (error) {
       console.error("Search error:", error);
     }
   };
 
-  const handleSelectMovie = () => {
+  const handleSelectMovie = (movie: SearchResult) => {
     setSearchQuery("");
     setSearchResults([]);
-    if (onNavigate) onNavigate("films");
+    if (onSelectMovie) onSelectMovie(movie);
+    else if (onNavigate) onNavigate("films");
   };
 
   return (
@@ -104,7 +164,7 @@ export default function Header({ currentUser, userAvatar, pageTitle = "Home", on
               {searchResults.map((movie) => (
                 <div
                   key={movie._id}
-                  onClick={handleSelectMovie}
+                  onClick={() => handleSelectMovie(movie)}
                   className="flex items-center gap-3 p-3 hover:bg-[#3d352c] cursor-pointer"
                 >
                   <div className="w-10 h-14 bg-[#16130e] rounded overflow-hidden flex-shrink-0">
@@ -119,7 +179,12 @@ export default function Header({ currentUser, userAvatar, pageTitle = "Home", on
                     )}
                   </div>
                   <div>
-                    <p className="text-white font-medium">{movie.title}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-white font-medium">{movie.title}</p>
+                      {movie.type === 'series' && (
+                        <span className="text-[10px] bg-[#c49148]/20 text-[#d4a050] px-1.5 py-0.5 rounded">Series</span>
+                      )}
+                    </div>
                     <p className="text-[#a89880] text-sm">{movie.year} • {movie.director}</p>
                   </div>
                 </div>
@@ -204,12 +269,60 @@ export default function Header({ currentUser, userAvatar, pageTitle = "Home", on
             )}
           </div>
 
-          <button className="relative p-2 text-[#a89880] hover:text-white transition-colors">
-            <BellIcon className="w-6 h-6" />
-            {currentUser && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-[#c48b61] rounded-full" />
+          <div className="relative" ref={notifRef}>
+            <button
+              onClick={handleBellClick}
+              className="relative p-2 text-[#a89880] hover:text-white transition-colors"
+            >
+              {notifications.length > 0 ? (
+                <BellAlertIcon className="w-6 h-6 text-[#c49148]" />
+              ) : (
+                <BellIcon className="w-6 h-6" />
+              )}
+              {currentUser && notifications.length > 0 && (
+                <span className="absolute top-0.5 right-0.5 min-w-[18px] h-[18px] bg-[#c48b61] rounded-full flex items-center justify-center text-[10px] text-white font-bold px-1">
+                  {notifications.length > 9 ? '9+' : notifications.length}
+                </span>
+              )}
+            </button>
+
+            {showNotifications && currentUser && (
+              <div className="absolute right-0 top-full mt-2 bg-[#2a2420] rounded-xl shadow-xl overflow-hidden z-50 w-80">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-[#3d352c]">
+                  <span className="text-white font-semibold text-sm">Notifications</span>
+                  {notifications.length > 0 && (
+                    <button
+                      onClick={handleClearNotifications}
+                      className="text-[#a89880] text-xs hover:text-[#c49148] transition-colors"
+                    >
+                      Clear all
+                    </button>
+                  )}
+                </div>
+                <div className="max-h-80 overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    notifications.map((notif) => (
+                      <div
+                        key={notif._id}
+                        className="flex items-start gap-3 px-4 py-3 hover:bg-[#3d352c] transition-colors border-b border-[#3d352c]/50 last:border-0"
+                      >
+                        <span className="text-lg flex-shrink-0 mt-0.5">{getNotifIcon(notif.type)}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white text-sm leading-snug">{notif.message}</p>
+                          <p className="text-[#a89880] text-xs mt-1">{timeAgo(notif.createdAt)}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-4 py-8 text-center">
+                      <BellIcon className="w-8 h-8 text-[#3d352c] mx-auto mb-2" />
+                      <p className="text-[#a89880] text-sm">No notifications yet</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
-          </button>
+          </div>
 
           {currentUser ? (
             <div className="flex items-center gap-3 bg-[#2a2420] rounded-full py-2 px-4">

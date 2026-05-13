@@ -6,21 +6,22 @@ import {
   getPopular, 
   getMyReviews 
 } from '../controllers/reviewController.js';
-import { protect } from '../middleware/authMiddleware.js'; // Hypothetical auth guard
 
 const router = express.Router();
 
-
-// PUBLIC ROUTES
-// Fetch popular reviews for the landing page
+// Popular reviews for dashboard
 router.get('/popular', getPopular);
 
-// Fetch reviews for a specific movie or series
+// Reviews for a specific movie/series
 router.get('/content/:contentId', getContentReviews);
 
-// PROTECTED ROUTES (Require Login)
-router.post('/', protect, createReview);
-router.post('/:id/like', protect, handleToggleLike);
-router.get('/me', protect, getMyReviews);
+// Reviews by a specific user
+router.get('/user/:username', getMyReviews);
+
+// Create a review (username in body)
+router.post('/', createReview);
+
+// Toggle like (username in body)
+router.post('/:id/like', handleToggleLike);
 
 export default router;

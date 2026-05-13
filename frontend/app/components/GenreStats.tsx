@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { movieAPI } from '../config/api';
+import { contentAPI } from '../config/api';
 
 interface GenreStat {
   _id: string;
   avgRating: number;
-  totalMovies: number;
+  totalItems: number;
 }
 
 export default function GenreStats() {
@@ -18,7 +18,7 @@ export default function GenreStats() {
 
   const fetchGenreStats = async () => {
     try {
-      const { data } = await movieAPI.getGenreStats();
+      const { data } = await contentAPI.getGenreStats('movie');
       setGenreStats(data.slice(0, 8));
     } catch (error) {
       console.error("Error fetching genre stats:", error);
@@ -57,7 +57,7 @@ export default function GenreStats() {
             <div className="flex justify-between items-center mb-1">
               <span className="text-white text-sm font-medium">{genre._id}</span>
               <span className="text-[#a89880] text-sm">
-                {genre.avgRating.toFixed(1)} • {genre.totalMovies} films
+                {genre.avgRating.toFixed(1)} • {genre.totalItems} films
               </span>
             </div>
             <div className="h-2 bg-[#2a2420] rounded-full overflow-hidden">

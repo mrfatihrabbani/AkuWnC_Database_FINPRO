@@ -2,10 +2,11 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 dotenv.config()
 
-import Movie from '../models/models.mongodb/movie.model.js'
+import Content from '../models/models.mongodb/movienseries.model.js'
 import User from '../models/models.mongodb/user.model.js'
 import Review from '../models/models.mongodb/review.model.js'
 import Watchlist from '../models/models.mongodb/watchlist.model.js'
+import AppInfo from '../models/models.mongodb/appingfo.model.js'
 
 const users = [
   { username: 'fatih', email: 'fatih@wncmail.com', password: 'fatih_password', bio: 'Horror, Action and sci-fi enthusiast' },
@@ -16,7 +17,7 @@ const users = [
 ]
 
 const movies = [
-  { title: 'A Girl Walks Home Alone at Night', year: 2014, director: 'Ana Lily Amirpour', genres: ['Horror', 'Romance', 'Thriller', 'Western'], synopsis: 'In the Iranian ghost-town Bad City, the townspeople are unaware they are being stalked by a lonesome vampire.', runtime: 101, language: 'English', poster: 'https://image.tmdb.org/t/p/w500/cd2rCE1nun7CESjBI8PGNEof1tb.jpg' },
+  { title: 'A Girl Walks Home Alone at Night', type: 'movie', year: 2014, director: 'Ana Lily Amirpour', genres: ['Horror', 'Romance', 'Thriller', 'Western'], synopsis: 'In the Iranian ghost-town Bad City, the townspeople are unaware they are being stalked by a lonesome vampire.', runtime: 101, language: 'English', poster: 'https://image.tmdb.org/t/p/w500/cd2rCE1nun7CESjBI8PGNEof1tb.jpg' },
   { title: 'American Sniper', year: 2014, director: 'Clint Eastwood', genres: ['Action', 'Drama', 'History', 'War'], synopsis: "Navy S.E.A.L. sniper Chris Kyle's pinpoint accuracy saves countless lives on the battlefield.", runtime: 133, language: 'English', poster: 'https://image.tmdb.org/t/p/w500/vJgtfUmZE5i4L12sOryAPuBa04K.jpg' },
   { title: 'Big Hero 6', year: 2014, director: 'Don Hall, Chris Williams', genres: ['Action', 'Adventure', 'Animation', 'Comedy', 'Family', 'Science Fiction'], synopsis: 'A special bond develops between plus-sized inflatable robot Baymax and prodigy Hiro Hamada.', runtime: 102, language: 'English', poster: 'https://image.tmdb.org/t/p/w500/2mxS4wUimwlLmI1xp6QW6NSU361.jpg' },
   { title: 'Birdman', year: 2014, director: 'Alejandro G. Iñárritu', genres: ['Comedy', 'Drama'], synopsis: 'A washed-up superhero actor attempts to revive his fading career with a Broadway production.', runtime: 119, language: 'English', poster: 'https://image.tmdb.org/t/p/w500/rHUg2AuIuLSIYMYFgavVwqt1jtc.jpg' },
@@ -103,50 +104,80 @@ async function seed() {
     await mongoose.connect(process.env.MONGO_URI)
     console.log('Connected to MongoDB Atlas\n')
 
-    await Promise.all([
-      User.deleteMany({}),
-      Movie.deleteMany({}),
-      Review.deleteMany({}),
-      Watchlist.deleteMany({}),
-    ])
-    console.log('Cleared existing collections')
+    // upsert users
+    const insertedUsers = await Promise.all(users.map(async (u) => {
+      const existing = await User.findOne({ email: u.email })
+      if (existing) {
+        existing.username = u.username
+        existing.bio = u.bio || existing.bio
+        return existing.save()
+      }
+      return User.create(u)
+    }))
+    console.log(`Upserted ${insertedUsers.length} users`)
 
-    const insertedUsers  = await User.insertMany(users)
-    const insertedMovies = await Movie.insertMany(movies)
-    console.log(`Inserted ${insertedUsers.length} users`)
-    console.log(`Inserted ${insertedMovies.length} movies`)
+    // upsert content
+    const moviesWithType = movies.map(m => ({ ...m, type: m.type || 'movie' }))
+    let contentCreated = 0
+    const insertedMovies = await Promise.all(moviesWithType.map(async (m) => {
+      const existing = await Content.findOne({ title: m.title })
+      if (existing) {
+        Object.assign(existing, m)
+        return existing.save()
+      }
+      contentCreated++
+      return Content.create(m)
+    }))
+    console.log(`Upserted ${insertedMovies.length} content items (${contentCreated} new)`)
 
     const u = (name)  => insertedUsers.find(x => x.username === name)
     const m = (title) => insertedMovies.find(x => x.title === title)
 
-    const reviews = [
-      { user: u('fatih')._id, movie: m('Hereditary')._id, rating: 5, content: 'Most terrifying film I have seen.', liked: true},
-      { user: u('fatih')._id, movie: m('Get Out')._id, rating: 5, content: 'Peele is a genius.', liked: true},
-      { user: u('fatih')._id, movie: m('Mad Max: Fury Road')._id, rating: 4.5, content: 'Pure adrenaline from start to finish.', liked: true},
-      { user: u('fatih')._id, movie: m('Interstellar')._id, rating: 4, content: 'Visually stunning but emotionally cold.', liked: true},
-      { user: u('rauly')._id, movie: m('Citizenfour')._id, rating: 5, content: 'One of the most important docs ever made.', liked: true},
-      { user: u('rauly')._id, movie: m('Amy')._id, rating: 5, content: 'Devastating and beautiful.', liked: true},
-      { user: u('rauly')._id, movie: m('Roma')._id, rating: 4.5, content: "Cuaron's masterwork.", liked: true},
-      { user: u('rauly')._id, movie: m('Free Solo')._id, rating: 5, content: 'Genuinely nerve-wracking.', liked: true},
-      { user: u('ryan')._id, movie: m('Your Name')._id, rating: 5, content: 'Cried three times.', liked: true},
-      { user: u('ryan')._id, movie: m('Spider-Man: Into the Spider-Verse')._id, rating: 5, content: 'Best animated film in years.', liked: true},
-      { user: u('ryan')._id, movie: m('Coco')._id, rating: 4.5, content: 'Pixar at their peak.', liked: true},
-      { user: u('ryan')._id, movie: m('Moana')._id, rating: 4, content: 'Great songs, great heart.', liked: true},
-      { user: u('tester')._id, movie: m('The Look of Silence')._id, rating: 5, content: 'Haunting and essential.', liked: true},
-      { user: u('tester')._id, movie: m('Arrival')._id, rating: 5, content: 'The best sci-fi in a decade.', liked: true},
-      { user: u('tester')._id, movie: m('Whiplash')._id, rating: 5, content: 'Fletcher is one of cinema\'s great villains.', liked: true},
+    // upsert reviews
+    const seedReviews = [
+      { user: u('fatih')._id, contentId: m('Hereditary')._id, rating: 5, content: 'Most terrifying film I have seen.'},
+      { user: u('fatih')._id, contentId: m('Get Out')._id, rating: 5, content: 'Peele is a genius.'},
+      { user: u('fatih')._id, contentId: m('Mad Max: Fury Road')._id, rating: 4.5, content: 'Pure adrenaline from start to finish.'},
+      { user: u('fatih')._id, contentId: m('Interstellar')._id, rating: 4, content: 'Visually stunning but emotionally cold.'},
+      { user: u('rauly')._id, contentId: m('Citizenfour')._id, rating: 5, content: 'One of the most important docs ever made.'},
+      { user: u('rauly')._id, contentId: m('Amy')._id, rating: 5, content: 'Devastating and beautiful.'},
+      { user: u('rauly')._id, contentId: m('Roma')._id, rating: 4.5, content: "Cuaron's masterwork."},
+      { user: u('rauly')._id, contentId: m('Free Solo')._id, rating: 5, content: 'Genuinely nerve-wracking.'},
+      { user: u('ryan')._id, contentId: m('Your Name')._id, rating: 5, content: 'Cried three times.'},
+      { user: u('ryan')._id, contentId: m('Spider-Man: Into the Spider-Verse')._id, rating: 5, content: 'Best animated film in years.'},
+      { user: u('ryan')._id, contentId: m('Coco')._id, rating: 4.5, content: 'Pixar at their peak.'},
+      { user: u('ryan')._id, contentId: m('Moana')._id, rating: 4, content: 'Great songs, great heart.'},
+      { user: u('tester')._id, contentId: m('The Look of Silence')._id, rating: 5, content: 'Haunting and essential.'},
+      { user: u('tester')._id, contentId: m('Arrival')._id, rating: 5, content: 'The best sci-fi in a decade.'},
+      { user: u('tester')._id, contentId: m('Whiplash')._id, rating: 5, content: 'Fletcher is one of cinema\'s great villains.'},
     ]
 
-    await Review.insertMany(reviews)
-    console.log(`Inserted ${reviews.length} reviews`)
-
-    const ratedMovieIds = [...new Set(reviews.map(r => r.movie.toString()))]
-    for (const movieId of ratedMovieIds) {
-      await Movie.recalcRating(movieId)
+    let reviewsCreated = 0
+    for (const r of seedReviews) {
+      const exists = await Review.findOne({ user: r.user, contentId: r.contentId })
+      if (!exists) {
+        await Review.create(r)
+        reviewsCreated++
+      }
     }
-    console.log('Updated movie average ratings')
+    console.log(`Seed reviews: ${reviewsCreated} new, ${seedReviews.length - reviewsCreated} already existed`)
 
-    const watchlists = [
+    // recalc ratings
+    const allReviewedIds = await Review.distinct('contentId')
+    for (const cid of allReviewedIds) {
+      const content = await Content.findById(cid)
+      if (content) {
+        const contentReviews = await Review.find({ contentId: cid })
+        const avg = contentReviews.reduce((sum, r) => sum + r.rating, 0) / contentReviews.length
+        content.avgRating = avg
+        content.totalRatings = contentReviews.length
+        await content.save()
+      }
+    }
+    console.log('Updated content average ratings')
+
+    // upsert watchlist
+    const seedWatchlists = [
       { user: u('fatih')._id, movie: m('Blade Runner 2049')._id, status: 'want_to_watch' },
       { user: u('fatih')._id, movie: m('The Hateful Eight')._id, status: 'watched', watchedAt: new Date('2024-02-10') },
       { user: u('rauly')._id, movie: m('The Look of Silence')._id, status: 'watched', watchedAt: new Date('2024-01-15') },
@@ -155,8 +186,40 @@ async function seed() {
       { user: u('tester')._id, movie: m('Sicario')._id, status: 'want_to_watch' },
     ]
 
-    await Watchlist.insertMany(watchlists)
-    console.log(`Inserted ${watchlists.length} watchlist entries`)
+    let watchlistCreated = 0
+    for (const w of seedWatchlists) {
+      const exists = await Watchlist.findOne({ user: w.user, movie: w.movie })
+      if (!exists) {
+        await Watchlist.create(w)
+        watchlistCreated++
+      }
+    }
+    console.log(`Seed watchlist: ${watchlistCreated} new, ${seedWatchlists.length - watchlistCreated} already existed`)
+
+    // upsert app info
+    const existingInfo = await AppInfo.findOne()
+    if (!existingInfo) {
+      await AppInfo.create({
+        aboutText: `AkuWnC is a social film & series platform built for cinephiles who love to track, rate, review, and discover movies and series with friends.
+
+Whether you're into horror, animation, documentaries, or blockbusters — AkuWnC helps you keep a personal diary of everything you've watched, find what to watch next through personalized recommendations, and connect with friends who share your taste.
+
+Built as a final project showcasing MongoDB, Neo4j, and modern web technologies.`,
+        version: '1.0.0',
+        contactEmail: 'team@akuwnc.com',
+        faqs: [
+          { question: 'How do I rate a movie?', answer: 'Click on any movie poster to open its detail page, then use the star rating at the top. Your rating is saved instantly.', category: 'Getting Started' },
+          { question: 'How do I add a movie to my watchlist?', answer: 'Open a movie detail and click "Want to Watch" to add it to your watchlist, or "Mark as Watched" to log it as seen.', category: 'Getting Started' },
+          { question: 'How do recommendations work?', answer: 'Recommendations are powered by Neo4j graph algorithms. The more you rate and the more friends you follow, the better your recommendations become.', category: 'Features' },
+          { question: 'Can I follow other users?', answer: 'Yes! Visit any user profile and click the Follow button. You can see who you follow and who follows you on your profile Network tab.', category: 'Features' },
+          { question: 'What databases does AkuWnC use?', answer: 'AkuWnC uses MongoDB Atlas for storing users, content, reviews, and watchlists, and Neo4j Aura for the social graph (follows, ratings, recommendations).', category: 'Technical' },
+          { question: 'Is this open source?', answer: 'This project was built as a university final project (FINPRO) demonstrating multi-database architecture with MongoDB and Neo4j.', category: 'Technical' },
+        ]
+      })
+      console.log('Created app info & FAQs')
+    } else {
+      console.log('App info already exists, skipping')
+    }
     
     console.log('\nMongoDB seed complete!')
 

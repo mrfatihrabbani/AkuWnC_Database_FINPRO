@@ -1,33 +1,68 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { StarIcon, HeartIcon, ChatBubbleLeftIcon } from "@heroicons/react/24/solid";
-import { userAPI } from '../config/api';
+import { StarIcon, HeartIcon } from "@heroicons/react/24/solid";
+import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
+import { reviewAPI, contentAPI } from '../config/api';
+import ProfileMovieModal from './ProfileMovieModal';
 
 interface Review {
   _id: string;
   user: { username: string; avatar?: string };
-  movie: { title: string; year: number; poster?: string };
+  contentId: { _id: string; title: string; poster?: string };
   rating: number;
   content: string;
-  liked: boolean;
+  likesCount: number;
+  likedBy: string[];
   createdAt: string;
+}
+
+interface MoviePreview {
+  _id: string;
+  title: string;
+  type?: string;
+  year: number;
+  director: string;
+  genres: string[];
+  synopsis: string;
+  poster?: string;
+  runtime?: number;
+  avgRating: number;
+  totalRatings: number;
 }
 
 export default function PopularReviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [previewMovie, setPreviewMovie] = useState<MoviePreview | null>(null);
+
+  const handleMovieClick = async (contentId: string) => {
+    try {
+      const { data } = await contentAPI.getById(contentId);
+      setPreviewMovie(data);
+    } catch { /* ignore */ }
+  };
 
   useEffect(() => {
+    setCurrentUser(localStorage.getItem("currentUser"));
     fetchReviews();
   }, []);
 
   const fetchReviews = async () => {
     try {
-      const { data } = await userAPI.getRecentReviews();
+      const { data } = await reviewAPI.getPopular(4);
       setReviews(data);
     } catch (error) {
       console.error("Error fetching reviews:", error);
     }
+  };
+
+  const handleLike = async (reviewId: string) => {
+    if (!currentUser) return;
+    try {
+      await reviewAPI.toggleLike(reviewId, currentUser);
+      fetchReviews();
+    } catch { /* ignore */ }
   };
 
   const renderStars = (rating: number) => {
@@ -53,15 +88,15 @@ export default function PopularReviews() {
         {reviews.map((review) => (
           <div
             key={review._id}
-            className="bg-[#16130e] rounded-xl p-4 hover:bg-[#2a2420] transition-colors cursor-pointer"
+            className="bg-[#16130e] rounded-xl p-4 hover:bg-[#2a2420] transition-colors"
           >
             <div className="flex gap-4">
-              <div className="w-20 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-[#2a2420]">
-                {review.movie?.poster ? (
+              <div className="w-20 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-[#2a2420] cursor-pointer" onClick={() => review.contentId?._id && handleMovieClick(review.contentId._id)}>
+                {review.contentId?.poster ? (
                   <img
-                    src={review.movie.poster}
-                    alt={review.movie.title}
-                    className="w-full h-full object-cover"
+                    src={review.contentId.poster}
+                    alt={review.contentId.title}
+                    className="w-full h-full object-cover hover:opacity-80 transition-opacity"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
@@ -79,22 +114,24 @@ export default function PopularReviews() {
                   <div>
                     <span className="text-white font-medium text-sm">{review.user?.username || "Unknown"}</span>
                     <span className="text-[#a89880] text-sm"> reviewed </span>
-                    <span className="text-[#d4a050] font-medium text-sm">{review.movie?.title || "Unknown"}</span>
+                    <span className="text-[#d4a050] font-medium text-sm">{review.contentId?.title || "Unknown"}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mb-2">
                   <div className="flex">{renderStars(review.rating)}</div>
-                  {review.liked && <HeartIcon className="w-4 h-4 text-[#c48b61]" />}
                 </div>
                 {review.content && <p className="text-[#a89880] text-sm line-clamp-2">{review.content}</p>}
                 <div className="flex items-center gap-4 mt-3">
-                  <button className="flex items-center gap-1 text-[#a89880] hover:text-[#c49148] transition-colors text-sm">
-                    <HeartIcon className="w-4 h-4" />
-                    <span>Like</span>
-                  </button>
-                  <button className="flex items-center gap-1 text-[#a89880] hover:text-[#d4a050] transition-colors text-sm">
-                    <ChatBubbleLeftIcon className="w-4 h-4" />
-                    <span>Reply</span>
+                  <button
+                    onClick={() => handleLike(review._id)}
+                    className="flex items-center gap-1 text-[#a89880] hover:text-[#c49148] transition-colors text-sm"
+                  >
+                    {currentUser && review.likedBy?.includes(currentUser) ? (
+                      <HeartIcon className="w-4 h-4 text-[#c48b61]" />
+                    ) : (
+                      <HeartOutline className="w-4 h-4" />
+                    )}
+                    <span>{review.likesCount || 0}</span>
                   </button>
                 </div>
               </div>
@@ -107,6 +144,11 @@ export default function PopularReviews() {
           </div>
         )}
       </div>
+      <ProfileMovieModal
+        movie={previewMovie}
+        isOpen={!!previewMovie}
+        onClose={() => setPreviewMovie(null)}
+      />
     </section>
   );
 }

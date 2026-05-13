@@ -11,6 +11,9 @@ import GenreStats from "./components/GenreStats";
 import FilmsPage from "./components/FilmsPage";
 import LoginModal from "./components/LoginModal";
 import ProfilePage from "./components/ProfilePage";
+import AboutPage from "./components/AboutPage";
+import ReviewsPage from "./components/ReviewsPage";
+import WatchlistPage from "./components/WatchlistPage";
 import { userAPI } from './config/api';
 
 const pageTitles: Record<string, string> = {
@@ -20,8 +23,7 @@ const pageTitles: Record<string, string> = {
   members: "Members",
   reviews: "Reviews",
   watchlist: "Watchlist",
-  stats: "Stats",
-  more: "More",
+  about: "About",
 };
 
 export default function Home() {
@@ -30,6 +32,7 @@ export default function Home() {
   const [activePage, setActivePage] = useState("home");
   const [viewingUser, setViewingUser] = useState<string | null>(null);
   const [showLogin, setShowLogin] = useState(false);
+  const [pendingMovieId, setPendingMovieId] = useState<string | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("currentUser");
@@ -79,6 +82,7 @@ export default function Home() {
           userAvatar={userAvatar}
           pageTitle={pageTitles[activePage] || "Home"}
           onNavigate={(page) => { setActivePage(page); if (page === "profile") setViewingUser(null); }}
+          onSelectMovie={(movie) => { setPendingMovieId(movie._id); setActivePage("films"); }}
           onLogin={handleLogin}
           onLogout={handleLogout}
         />
@@ -102,13 +106,19 @@ export default function Home() {
           </main>
         )}
 
-        {activePage === "films" && <FilmsPage currentUser={currentUser} />}
+        {activePage === "films" && <FilmsPage currentUser={currentUser} initialMovieId={pendingMovieId} onClearInitialMovie={() => setPendingMovieId(null)} />}
+        {activePage === "reviews" && (
+          <ReviewsPage currentUser={currentUser} onViewProfile={handleViewProfile} />
+        )}
+        {activePage === "watchlist" && <WatchlistPage currentUser={currentUser} />}
+        {activePage === "about" && <AboutPage />}
         {activePage === "profile" && currentUser && (
           <ProfilePage
             username={viewingUser || currentUser}
             currentUser={currentUser}
             onAvatarChange={() => fetchAvatar(currentUser)}
             onViewProfile={handleViewProfile}
+            onViewInFilms={(movieId) => { setPendingMovieId(movieId); setActivePage("films"); }}
           />
         )}
       </div>

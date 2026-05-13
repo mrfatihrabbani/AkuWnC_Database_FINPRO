@@ -1,14 +1,6 @@
-<<<<<<< HEAD:backend/src/controllers/movienseriesController.js
-import Movie from '../models/models.mongodb/movienseries.model.js';
+import Content from '../models/models.mongodb/movienseries.model.js';
+import GraphModel from '../models/models.neo4j/graph.model.js';
 
-=======
-import Content from '../models.mongodb/movienseries.model.js';
-import GraphModel from '../models.neo4j/graph.model.js';
-
- // Search (Movies or Series)
- // URL: /api/content/search?q=interstellar&type=movie
- 
->>>>>>> f7d4fe76e445125d1bab81c53a7b95f65434bbb0:AkuWnC_Database_FINPRO-main/backend/src/controller/movienseriesController.js
 export const searchContent = async (req, res) => {
   try {
     const { q, type } = req.query; // type is optional ('movie' or 'series')
@@ -111,8 +103,7 @@ export const refreshSeriesRatings = async (req, res) => {
  // rateContent (movies & series)
 export const handleRating = async (req, res) => {
   try {
-    const { contentId, score, title, type } = req.body;
-    const username = req.user.username; 
+    const { contentId, score, title, type, username } = req.body; 
 
     // Update Graph DB (Neo4j)
     // Map 'movie' -> 'Movie' and 'series' -> 'Series' for Neo4j labels
@@ -137,7 +128,7 @@ export const handleRating = async (req, res) => {
 // GET /api/content/recommendations
 export const getPersonalizedRecs = async (req, res) => {
   try {
-    const username = req.user.username;
+    const { username } = req.query;
     const recs = await GraphModel.getRecommendations(username);
     res.status(200).json(recs);
   } catch (error) {
@@ -164,6 +155,20 @@ export const getSimilarItems = async (req, res) => {
   }
 };
 
+// Get content by array of titles
+export const getByTitles = async (req, res) => {
+  try {
+    const { titles } = req.body;
+    if (!titles || !Array.isArray(titles)) {
+      return res.status(400).json({ error: 'titles array required' });
+    }
+    const results = await Content.find({ title: { $in: titles } });
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
   // Request FetchBrowseContent 
  export const fetchMovies = async (req, res) => {
   try {
@@ -182,9 +187,4 @@ export const getSimilarItems = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-<<<<<<< HEAD:backend/src/controllers/movienseriesController.js
 };
-=======
-};
-
->>>>>>> f7d4fe76e445125d1bab81c53a7b95f65434bbb0:AkuWnC_Database_FINPRO-main/backend/src/controller/movienseriesController.js

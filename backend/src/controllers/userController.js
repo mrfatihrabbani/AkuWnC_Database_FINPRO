@@ -29,7 +29,7 @@ export const getRecentReviews = async (req, res) => {
   try {
     const reviews = await Review.find()
       .populate('user', 'username avatar')
-      .populate('movie', 'title year poster')
+      .populate('contentId', 'title year poster')
       .sort({ createdAt: -1 })
       .limit(4);
     res.json(reviews);
@@ -107,7 +107,7 @@ export const getUserReviews = async (req, res) => {
     if (!user) return res.status(404).json({ error: 'User not found' });
     
     const reviews = await Review.find({ user: user._id })
-      .populate('movie', 'title year poster')
+      .populate('contentId', 'title year poster')
       .sort({ createdAt: -1 })
       .limit(4);
     res.json(reviews);

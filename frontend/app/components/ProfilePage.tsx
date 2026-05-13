@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { UserCircleIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import EditProfileModal from "./EditProfileModal";
-import { graphAPI, userAPI } from '../config/api';
+import ProfileMovieModal from "./ProfileMovieModal";
+import { graphAPI, userAPI, watchlistAPI, contentAPI } from '../config/api';
 
 interface UserProfile {
   username: string;
@@ -24,9 +25,30 @@ interface UserReview {
   _id: string;
   rating: number;
   content: string;
-  liked: boolean;
-  movie: { title: string; year: number; poster?: string };
+  contentId: { _id: string; title: string; year: number; poster?: string };
   createdAt: string;
+}
+
+interface WatchlistItem {
+  _id: string;
+  movie: { _id: string; title: string; year: number; poster?: string; avgRating?: number; type?: string };
+  status: 'watched' | 'want_to_watch';
+  watchedAt?: string;
+  createdAt: string;
+}
+
+interface ProfileMovieData {
+  _id: string;
+  title: string;
+  type?: string;
+  year: number;
+  director: string;
+  genres: string[];
+  synopsis: string;
+  poster?: string;
+  runtime?: number;
+  avgRating: number;
+  totalRatings: number;
 }
 
 interface ProfilePageProps {
@@ -34,23 +56,42 @@ interface ProfilePageProps {
   currentUser?: string;
   onAvatarChange?: () => void;
   onViewProfile?: (username: string) => void;
+  onViewInFilms?: (movieId: string) => void;
 }
 
-export default function ProfilePage({ username, currentUser, onAvatarChange, onViewProfile }: ProfilePageProps) {
+export default function ProfilePage({ username, currentUser, onAvatarChange, onViewProfile, onViewInFilms }: ProfilePageProps) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [reviews, setReviews] = useState<UserReview[]>([]);
   const [activeTab, setActiveTab] = useState("profile");
   const [showEdit, setShowEdit] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
+  const [watchlistFilter, setWatchlistFilter] = useState<'all' | 'watched' | 'want_to_watch'>('all');
+  const [previewMovie, setPreviewMovie] = useState<ProfileMovieData | null>(null);
+
+  const handleMovieClick = async (contentId: string) => {
+    try {
+      const { data } = await contentAPI.getById(contentId);
+      setPreviewMovie(data);
+    } catch { /* ignore */ }
+  };
 
   const isOwnProfile = currentUser === username;
 
   useEffect(() => {
     fetchProfile();
     fetchReviews();
+    fetchWatchlist();
     if (currentUser && currentUser !== username) checkFollowStatus();
   }, [username]);
+
+  const fetchWatchlist = async () => {
+    try {
+      const { data } = await watchlistAPI.get(username);
+      setWatchlist(data);
+    } catch { /* ignore */ }
+  };
 
   const checkFollowStatus = async () => {
     if (!currentUser) return;
@@ -112,7 +153,7 @@ export default function ProfilePage({ username, currentUser, onAvatarChange, onV
 
   return (
     <div className="p-6">
-      {/* Profile Header */}
+      {/* header */}
       <div className="flex items-start gap-6 mb-8">
         <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#c48b61] to-[#c49148] flex items-center justify-center flex-shrink-0">
           {profile.avatar ? (
@@ -181,7 +222,7 @@ export default function ProfilePage({ username, currentUser, onAvatarChange, onV
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* tabs */}
       <div className="border-b border-[#3d352c] mb-8">
         <div className="flex gap-6">
           {tabs.map((tab) => (
@@ -200,11 +241,11 @@ export default function ProfilePage({ username, currentUser, onAvatarChange, onV
         </div>
       </div>
 
-      {/* Profile Tab */}
+      {/* profile */}
       {activeTab === "profile" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            {/* Recent Activity */}
+            {/* recent activity */}
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-sm font-semibold text-[#a89880] uppercase tracking-wider">Recent Activity</h2>
@@ -218,12 +259,12 @@ export default function ProfilePage({ username, currentUser, onAvatarChange, onV
               {reviews.length > 0 ? (
                 <div className="grid grid-cols-4 gap-4">
                   {reviews.map((review) => (
-                    <div key={review._id} className="group cursor-pointer">
+                    <div key={review._id} className="group cursor-pointer" onClick={() => review.contentId?._id && handleMovieClick(review.contentId._id)}>
                       <div className="aspect-[2/3] rounded-lg overflow-hidden bg-[#2a2420] border border-[#3d352c]">
-                        {review.movie?.poster ? (
+                        {review.contentId?.poster ? (
                           <img
-                            src={review.movie.poster}
-                            alt={review.movie.title}
+                            src={review.contentId.poster}
+                            alt={review.contentId.title}
                             className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
                           />
                         ) : (
@@ -233,7 +274,7 @@ export default function ProfilePage({ username, currentUser, onAvatarChange, onV
                         )}
                       </div>
                       <div className="mt-2">
-                        <p className="text-white text-xs font-medium truncate">{review.movie?.title}</p>
+                        <p className="text-white text-xs font-medium truncate">{review.contentId?.title}</p>
                         <div className="flex items-center gap-1 mt-0.5">
                           <StarIcon className="w-3 h-3 text-[#c49148]" />
                           <span className="text-[#a89880] text-xs">{review.rating}</span>
@@ -250,7 +291,7 @@ export default function ProfilePage({ username, currentUser, onAvatarChange, onV
             </div>
           </div>
 
-          {/* Sidebar */}
+          {/* sidebar */}
           <div className="space-y-6">
             <div>
               <h3 className="text-sm font-semibold text-[#a89880] uppercase tracking-wider mb-3">Activity</h3>
@@ -317,15 +358,15 @@ export default function ProfilePage({ username, currentUser, onAvatarChange, onV
         </div>
       )}
 
-      {/* Reviews Tab */}
+      {/* reviews */}
       {activeTab === "reviews" && (
         <div className="space-y-4">
           {reviews.length > 0 ? (
             reviews.map((review) => (
               <div key={review._id} className="flex gap-4 bg-[#16130e] rounded-xl p-4">
-                <div className="w-16 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-[#2a2420]">
-                  {review.movie?.poster ? (
-                    <img src={review.movie.poster} alt={review.movie.title} className="w-full h-full object-cover" />
+                <div className="w-16 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-[#2a2420] cursor-pointer" onClick={() => review.contentId?._id && handleMovieClick(review.contentId._id)}>
+                  {review.contentId?.poster ? (
+                    <img src={review.contentId.poster} alt={review.contentId.title} className="w-full h-full object-cover hover:opacity-80 transition-opacity" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <span className="text-2xl">🎬</span>
@@ -333,8 +374,8 @@ export default function ProfilePage({ username, currentUser, onAvatarChange, onV
                   )}
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-white font-medium">{review.movie?.title}</h3>
-                  <p className="text-[#a89880] text-xs mb-2">{review.movie?.year}</p>
+                  <h3 className="text-white font-medium">{review.contentId?.title}</h3>
+                  <p className="text-[#a89880] text-xs mb-2">{review.contentId?.year}</p>
                   <div className="flex items-center gap-1 mb-2">
                     {Array.from({ length: Math.floor(review.rating) }).map((_, i) => (
                       <StarIcon key={i} className="w-4 h-4 text-[#c49148]" />
@@ -352,7 +393,7 @@ export default function ProfilePage({ username, currentUser, onAvatarChange, onV
         </div>
       )}
 
-      {/* Network Tab */}
+      {/* network */}
       {activeTab === "network" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
@@ -402,10 +443,89 @@ export default function ProfilePage({ username, currentUser, onAvatarChange, onV
         </div>
       )}
 
-      {/* Placeholder for other tabs */}
-      {(activeTab === "films" || activeTab === "watchlist") && (
-        <div className="bg-[#16130e] rounded-xl p-8 text-center">
-          <p className="text-[#a89880]">Coming soon</p>
+      {/* films */}
+      {activeTab === "films" && (
+        <div>
+          {(() => {
+            const watched = watchlist.filter(w => w.status === 'watched');
+            return watched.length > 0 ? (
+              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-4">
+                {watched.map((item) => (
+                  <div key={item._id} className="group cursor-pointer" onClick={() => item.movie?._id && handleMovieClick(item.movie._id)}>
+                    <div className="aspect-[2/3] rounded-lg overflow-hidden bg-[#2a2420] border border-[#3d352c]">
+                      {item.movie?.poster ? (
+                        <img src={item.movie.poster} alt={item.movie.title} className="w-full h-full object-cover group-hover:opacity-80 transition-opacity" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center"><span className="text-3xl">🎬</span></div>
+                      )}
+                    </div>
+                    <div className="mt-2">
+                      <p className="text-white text-xs font-medium truncate">{item.movie?.title}</p>
+                      <p className="text-[#a89880] text-[10px]">{item.movie?.year}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-[#16130e] rounded-xl p-8 text-center">
+                <p className="text-[#a89880]">No films watched yet</p>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* watchlist */}
+      {activeTab === "watchlist" && (
+        <div>
+          <div className="flex gap-2 mb-6">
+            {(['all', 'watched', 'want_to_watch'] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setWatchlistFilter(f)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  watchlistFilter === f ? 'bg-[#c49148] text-white' : 'bg-[#2a2420] text-[#a89880] hover:text-white'
+                }`}
+              >
+                {f === 'all' ? 'All' : f === 'watched' ? 'Watched' : 'Want to Watch'}
+              </button>
+            ))}
+          </div>
+          {(() => {
+            const filtered = watchlistFilter === 'all' ? watchlist : watchlist.filter(w => w.status === watchlistFilter);
+            return filtered.length > 0 ? (
+              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-4">
+                {filtered.map((item) => (
+                  <div key={item._id} className="group cursor-pointer" onClick={() => item.movie?._id && handleMovieClick(item.movie._id)}>
+                    <div className="aspect-[2/3] rounded-lg overflow-hidden bg-[#2a2420] border border-[#3d352c] relative">
+                      {item.movie?.poster ? (
+                        <img src={item.movie.poster} alt={item.movie.title} className="w-full h-full object-cover group-hover:opacity-80 transition-opacity" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center"><span className="text-3xl">🎬</span></div>
+                      )}
+                      <div className="absolute top-2 right-2">
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                          item.status === 'watched' ? 'bg-[#34A853]/80 text-white' : 'bg-[#c49148]/80 text-white'
+                        }`}>
+                          {item.status === 'watched' ? '✓ Watched' : '🔖 Want'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <p className="text-white text-xs font-medium truncate">{item.movie?.title}</p>
+                      <p className="text-[#a89880] text-[10px]">{item.movie?.year}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-[#16130e] rounded-xl p-8 text-center">
+                <p className="text-[#a89880]">
+                  {watchlistFilter === 'all' ? 'Watchlist is empty' : `No ${watchlistFilter === 'watched' ? 'watched films' : 'films to watch'} yet`}
+                </p>
+              </div>
+            );
+          })()}
         </div>
       )}
 
@@ -421,6 +541,13 @@ export default function ProfilePage({ username, currentUser, onAvatarChange, onV
           currentAvatar={profile.avatar || ""}
         />
       )}
+
+      <ProfileMovieModal
+        movie={previewMovie}
+        isOpen={!!previewMovie}
+        onClose={() => setPreviewMovie(null)}
+        onViewInFilms={(movieId) => { setPreviewMovie(null); if (onViewInFilms) onViewInFilms(movieId); }}
+      />
     </div>
   );
 }

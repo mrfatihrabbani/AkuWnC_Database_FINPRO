@@ -7,7 +7,7 @@ import {
   StarIcon,
   BookmarkIcon,
   EllipsisHorizontalIcon,
-  ChartBarIcon,
+  InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeIconSolid,
@@ -19,7 +19,7 @@ const menuItems = [
   { icon: FilmIcon, activeIcon: FilmIconSolid, label: "Films", id: "films" },
   { icon: StarIcon, label: "Reviews", id: "reviews" },
   { icon: BookmarkIcon, label: "Watchlist", id: "watchlist" },
-  { icon: ChartBarIcon, label: "Stats", id: "stats" },
+  { icon: InformationCircleIcon, label: "About", id: "about" },
 ];
 
 interface SidebarProps {

@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 const watchlistSchema = new mongoose.Schema(
   {
     user:  { type: mongoose.Schema.Types.ObjectId, ref: 'User',  required: true },
-    movie: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie', required: true },
+    movie: { type: mongoose.Schema.Types.ObjectId, ref: 'Content', required: true },
     status: {
       type: String,
       enum: ['watched', 'want_to_watch'],

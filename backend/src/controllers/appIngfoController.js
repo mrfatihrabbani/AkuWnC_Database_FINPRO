@@ -1,4 +1,4 @@
-import AppInfo from '../models/appingfo.model.js';
+import AppInfo from '../models/models.mongodb/appingfo.model.js';
 
 
 // Get all App Info and FAQs

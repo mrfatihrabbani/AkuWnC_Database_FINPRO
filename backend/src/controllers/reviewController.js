@@ -1,49 +1,47 @@
-import driver from '../config/neo4j.js';
+import Review from '../models/models.mongodb/review.model.js';
+import User from '../models/models.mongodb/user.model.js';
 
 /**
- * Create a new review
- * Triggered by the "Post Review" button on your frontend
+ * Create a new review (username-based, no JWT)
  */
 export const createReview = async (req, res) => {
   try {
-    const { 
-      contentId, rating, content, isFirstWatch, 
-      containsSpoilers, replyPrivacy, taggedUsers 
-    } = req.body;
+    const { username, contentId, rating, content, isFirstWatch, containsSpoilers } = req.body;
 
-    // We create the review using the standard Mongoose create
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
     const newReview = await Review.create({
-      user: req.user.id, // Derived from Auth Middleware
+      user: user._id,
       contentId,
       rating,
       content,
-      isFirstWatch,
-      containsSpoilers,
-      replyPrivacy,
-      taggedUsers
+      isFirstWatch: isFirstWatch || true,
+      containsSpoilers: containsSpoilers || false,
     });
 
-    // CRITICAL: Trigger the rating recalculation in the Content model
-    // This ensures the movie/series average rating stays updated
-    if (newReview) {
-      await Content.recalcRating(contentId);
-    }
+    const populated = await Review.findById(newReview._id)
+      .populate('user', 'username avatar')
+      .populate('contentId', 'title poster');
 
-    res.status(201).json(newReview);
+    res.status(201).json(populated);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
 /**
- * Toggle Like on a Review
- * Calls Review.toggleLike from your class methods
+ * Toggle Like on a Review (username-based)
  */
 export const handleToggleLike = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
-    const updatedReview = await Review.toggleLike(id, userId);
+    const { username } = req.body;
+
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const updatedReview = await Review.toggleLike(id, user._id);
     res.status(200).json(updatedReview);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -75,4 +73,20 @@ export const getPopular = async (req, res) => {
   }
 };
 
+/**
+ * Get reviews by a specific user (username-based)
+ */
+export const getMyReviews = async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
+    const reviews = await Review.find({ user: user._id })
+      .populate('user', 'username avatar')
+      .populate('contentId', 'title poster')
+      .sort({ createdAt: -1 });
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
