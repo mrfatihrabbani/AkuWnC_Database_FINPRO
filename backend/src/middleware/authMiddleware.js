@@ -1,4 +1,4 @@
-import { verifyToken } from './tokenService.js';
+import { verifyToken } from '../utils/tokenService.js';
 
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -16,4 +16,5 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
+export const protect = authMiddleware;
 export default authMiddleware;

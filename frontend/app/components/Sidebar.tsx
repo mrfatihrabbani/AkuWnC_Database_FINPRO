@@ -3,20 +3,21 @@
 import {
   HomeIcon,
   FilmIcon,
-  UserGroupIcon,
   StarIcon,
   BookmarkIcon,
-  EllipsisHorizontalIcon,
   InformationCircleIcon,
+  PlayCircleIcon,
 } from "@heroicons/react/24/outline";
 import {
   HomeIcon as HomeIconSolid,
   FilmIcon as FilmIconSolid,
+  PlayCircleIcon as PlayCircleSolid,
 } from "@heroicons/react/24/solid";
 
 const menuItems = [
   { icon: HomeIcon, activeIcon: HomeIconSolid, label: "Home", id: "home" },
   { icon: FilmIcon, activeIcon: FilmIconSolid, label: "Films", id: "films" },
+  { icon: PlayCircleIcon, activeIcon: PlayCircleSolid, label: "Breakdowns", id: "breakdowns" },
   { icon: StarIcon, label: "Reviews", id: "reviews" },
   { icon: BookmarkIcon, label: "Watchlist", id: "watchlist" },
   { icon: InformationCircleIcon, label: "About", id: "about" },

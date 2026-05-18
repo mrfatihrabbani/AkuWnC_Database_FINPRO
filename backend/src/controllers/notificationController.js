@@ -53,6 +53,16 @@ export const getNotificationsByUsername = async (req, res) => {
   }
 };
 
+// mark notif as read when user clicks it
+export const markNotificationRead = async (req, res) => {
+  try {
+    await Notification.markAsRead(req.params.id);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Clear all notifications for a user
 export const clearNotificationsByUsername = async (req, res) => {
   try {
