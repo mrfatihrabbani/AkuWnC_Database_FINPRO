@@ -5,6 +5,12 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+api.interceptors.request.use((config) => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
 export const authAPI = {
   login: (email: string, password: string) => api.post('/api/auth/login', { email, password }),
   register: (username: string, email: string, password: string) => 
@@ -84,7 +90,27 @@ export const watchlistAPI = {
 
 export const notificationAPI = {
   getForUser: (username: string) => api.get(`/api/notifications/${username}`),
+  markAsRead: (id: string) => api.patch(`/api/notifications/${id}/read`),
   clearAll: (username: string) => api.delete(`/api/notifications/${username}/clear`),
+};
+
+export const breakdownAPI = {
+  getByType: (type: string, page = 1) => api.get('/api/breakdowns', { params: { type, page } }),
+  getForContent: (contentId: string) => api.get(`/api/breakdowns/content/${contentId}`),
+  upload: (data: { title: string; description: string; videoUrl: string; contentType: string; subCategory: string; relatedContentId: string; containsSpoilers: boolean }) =>
+    api.post('/api/breakdowns', data),
+  trackView: (id: string) => api.patch(`/api/breakdowns/${id}/view`),
+  toggleLike: (id: string) => api.post(`/api/breakdowns/${id}/like`),
+};
+
+export const commentAPI = {
+  post: (data: { profileId: string; reviewId: string; text: string; rating?: number }) =>
+    api.post('/api/comments', data),
+  getForReview: (reviewId: string) => api.get(`/api/comments/review/${reviewId}`),
+};
+
+export const themeAPI = {
+  toggle: () => api.put('/api/users/theme'),
 };
 
 export default api;

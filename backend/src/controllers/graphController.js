@@ -1,4 +1,6 @@
 import GraphModel from '../models/models.neo4j/graph.model.js';
+import { notifyNewFollower } from './notificationController.js';
+import User from '../models/models.mongodb/user.model.js';
 
 export const getFollowing = async (req, res) => {
   try {
@@ -25,6 +27,14 @@ export const followUser = async (req, res) => {
       return res.status(400).json({ error: 'Missing from or to' });
     }
     await GraphModel.follow(from, to);
+
+    // send notif to the followed user
+    const targetUser = await User.findOne({ username: to });
+    const followerUser = await User.findOne({ username: from });
+    if (targetUser && followerUser) {
+      await notifyNewFollower(targetUser._id, from, followerUser._id);
+    }
+
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -15,6 +18,8 @@ import notificationRoutes from './routes/notificationRoute.js';
 import reviewRoutes from './routes/reviewPageRoute.js';
 import contentRoutes from './routes/movienseriesRoute.js';
 import watchlistRoutes from './routes/watchlistRoute.js';
+import breakdownRoutes from './routes/breakdownRoute.js';
+import commentRoutes from './routes/commentRoute.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -37,6 +42,8 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/watchlist', watchlistRoutes);
+app.use('/api/breakdowns', breakdownRoutes);
+app.use('/api/comments', commentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

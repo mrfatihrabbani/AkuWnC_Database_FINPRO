@@ -35,6 +35,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
 
     try {
       const { data } = await authAPI.login(email, password);
+      if (data.token) localStorage.setItem('token', data.token);
       onLoginSuccess(data.user.username);
       resetForm();
       onClose();
@@ -60,6 +61,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
       await authAPI.register(username, email, password);
       // auto-login after register
       const { data } = await authAPI.login(email, password);
+      if (data.token) localStorage.setItem('token', data.token);
       onLoginSuccess(data.user.username);
       resetForm();
       onClose();

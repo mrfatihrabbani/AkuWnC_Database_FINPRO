@@ -14,6 +14,7 @@ import ProfilePage from "./components/ProfilePage";
 import AboutPage from "./components/AboutPage";
 import ReviewsPage from "./components/ReviewsPage";
 import WatchlistPage from "./components/WatchlistPage";
+import BreakdownsPage from "./components/BreakdownsPage";
 import { userAPI } from './config/api';
 
 const pageTitles: Record<string, string> = {
@@ -23,6 +24,7 @@ const pageTitles: Record<string, string> = {
   members: "Members",
   reviews: "Reviews",
   watchlist: "Watchlist",
+  breakdowns: "Breakdowns",
   about: "About",
 };
 
@@ -33,6 +35,7 @@ export default function Home() {
   const [viewingUser, setViewingUser] = useState<string | null>(null);
   const [showLogin, setShowLogin] = useState(false);
   const [pendingMovieId, setPendingMovieId] = useState<string | null>(null);
+  const [highlightReviewId, setHighlightReviewId] = useState<string | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("currentUser");
@@ -70,6 +73,7 @@ export default function Home() {
     setActivePage("home");
     setViewingUser(null);
     localStorage.removeItem("currentUser");
+    localStorage.removeItem("token");
   };
 
   return (
@@ -81,8 +85,10 @@ export default function Home() {
           currentUser={currentUser}
           userAvatar={userAvatar}
           pageTitle={pageTitles[activePage] || "Home"}
-          onNavigate={(page) => { setActivePage(page); if (page === "profile") setViewingUser(null); }}
+          onNavigate={(page) => { setActivePage(page); if (page === "profile") setViewingUser(null); setHighlightReviewId(null); }}
+          onNotifReviewClick={(reviewId) => { setHighlightReviewId(reviewId); setActivePage("reviews"); }}
           onSelectMovie={(movie) => { setPendingMovieId(movie._id); setActivePage("films"); }}
+          onViewProfile={handleViewProfile}
           onLogin={handleLogin}
           onLogout={handleLogout}
         />
@@ -107,8 +113,9 @@ export default function Home() {
         )}
 
         {activePage === "films" && <FilmsPage currentUser={currentUser} initialMovieId={pendingMovieId} onClearInitialMovie={() => setPendingMovieId(null)} />}
+        {activePage === "breakdowns" && <BreakdownsPage currentUser={currentUser} />}
         {activePage === "reviews" && (
-          <ReviewsPage currentUser={currentUser} onViewProfile={handleViewProfile} />
+          <ReviewsPage currentUser={currentUser} onViewProfile={handleViewProfile} highlightReviewId={highlightReviewId} onClearHighlight={() => setHighlightReviewId(null)} />
         )}
         {activePage === "watchlist" && <WatchlistPage currentUser={currentUser} />}
         {activePage === "about" && <AboutPage />}

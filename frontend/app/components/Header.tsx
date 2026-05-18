@@ -11,12 +11,14 @@ import {
   SunIcon,
 } from "@heroicons/react/24/outline";
 import { BellAlertIcon } from "@heroicons/react/24/solid";
-import { contentAPI, notificationAPI } from '../config/api';
+import { contentAPI, notificationAPI, themeAPI } from '../config/api';
 
 interface Notification {
   _id: string;
-  type: 'NEW_FOLLOWER' | 'RECOMMENDATION' | 'TAGGED';
+  type: 'NEW_FOLLOWER' | 'RECOMMENDATION' | 'TAGGED' | 'COMMENT';
   message: string;
+  relatedId?: string;
+  read: boolean;
   createdAt: string;
 }
 
@@ -35,11 +37,13 @@ interface HeaderProps {
   pageTitle?: string;
   onNavigate?: (page: string) => void;
   onSelectMovie?: (movie: SearchResult) => void;
+  onViewProfile?: (username: string) => void;
+  onNotifReviewClick?: (reviewId: string) => void;
   onLogin?: () => void;
   onLogout?: () => void;
 }
 
-export default function Header({ currentUser, userAvatar, pageTitle = "Home", onNavigate, onSelectMovie, onLogin, onLogout }: HeaderProps) {
+export default function Header({ currentUser, userAvatar, pageTitle = "Home", onNavigate, onSelectMovie, onViewProfile, onNotifReviewClick, onLogin, onLogout }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showSettings, setShowSettings] = useState(false);
@@ -56,11 +60,12 @@ export default function Header({ currentUser, userAvatar, pageTitle = "Home", on
     document.documentElement.setAttribute("data-theme", initial);
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = async () => {
     const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
     document.documentElement.setAttribute("data-theme", next);
     localStorage.setItem("theme", next);
+    try { await themeAPI.toggle(); } catch { /* ignore */ }
   };
 
   // close dropdowns on outside click
@@ -101,11 +106,28 @@ export default function Header({ currentUser, userAvatar, pageTitle = "Home", on
     } catch { /* ignore */ }
   };
 
+  const handleNotifClick = async (notif: Notification) => {
+    setShowNotifications(false);
+    if (!notif.read) {
+      setNotifications((prev) => prev.map((n) => n._id === notif._id ? { ...n, read: true } : n));
+      try { await notificationAPI.markAsRead(notif._id); } catch { /* ignore */ }
+    }
+    // get the username from the notif message (first word)
+    const username = notif.message.split(' ')[0];
+
+    if (notif.type === 'NEW_FOLLOWER' && onViewProfile) {
+      onViewProfile(username);
+    } else if (notif.type === 'COMMENT' && notif.relatedId && onNotifReviewClick) {
+      onNotifReviewClick(notif.relatedId);
+    }
+  };
+
   const getNotifIcon = (type: string) => {
     switch (type) {
       case 'NEW_FOLLOWER': return '👤';
       case 'RECOMMENDATION': return '🎬';
       case 'TAGGED': return '🏷️';
+      case 'COMMENT': return '💬';
       default: return '🔔';
     }
   };
@@ -279,9 +301,9 @@ export default function Header({ currentUser, userAvatar, pageTitle = "Home", on
               ) : (
                 <BellIcon className="w-6 h-6" />
               )}
-              {currentUser && notifications.length > 0 && (
+              {currentUser && notifications.filter(n => !n.read).length > 0 && (
                 <span className="absolute top-0.5 right-0.5 min-w-[18px] h-[18px] bg-[#c48b61] rounded-full flex items-center justify-center text-[10px] text-white font-bold px-1">
-                  {notifications.length > 9 ? '9+' : notifications.length}
+                  {notifications.filter(n => !n.read).length > 9 ? '9+' : notifications.filter(n => !n.read).length}
                 </span>
               )}
             </button>
@@ -304,13 +326,15 @@ export default function Header({ currentUser, userAvatar, pageTitle = "Home", on
                     notifications.map((notif) => (
                       <div
                         key={notif._id}
-                        className="flex items-start gap-3 px-4 py-3 hover:bg-[#3d352c] transition-colors border-b border-[#3d352c]/50 last:border-0"
+                        onClick={() => handleNotifClick(notif)}
+                        className="flex items-start gap-3 px-4 py-3 hover:bg-[#3d352c] transition-colors border-b border-[#3d352c]/50 last:border-0 cursor-pointer"
                       >
                         <span className="text-lg flex-shrink-0 mt-0.5">{getNotifIcon(notif.type)}</span>
                         <div className="flex-1 min-w-0">
-                          <p className="text-white text-sm leading-snug">{notif.message}</p>
+                          <p className={`text-sm leading-snug ${notif.read ? 'text-[#a89880]' : 'text-white'}`}>{notif.message}</p>
                           <p className="text-[#a89880] text-xs mt-1">{timeAgo(notif.createdAt)}</p>
                         </div>
+                        {!notif.read && <span className="w-2.5 h-2.5 rounded-full bg-red-500 flex-shrink-0 mt-2" />}
                       </div>
                     ))
                   ) : (

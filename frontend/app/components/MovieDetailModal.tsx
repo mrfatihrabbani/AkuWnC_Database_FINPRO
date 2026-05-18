@@ -7,6 +7,7 @@ import { StarIcon as StarOutline } from "@heroicons/react/24/outline";
 import { EyeIcon, BookmarkIcon } from "@heroicons/react/24/outline";
 import { EyeIcon as EyeSolid, BookmarkIcon as BookmarkSolid } from "@heroicons/react/24/solid";
 import { contentAPI, reviewAPI, movieAPI, graphAPI, watchlistAPI } from "../config/api";
+import ReviewComments from "./ReviewComments";
 
 interface Movie {
   _id: string;
@@ -377,6 +378,7 @@ export default function MovieDetailModal({ isOpen, onClose, movie, onSelectMovie
                       </div>
                     </div>
                     <p className="text-[#a89880] text-sm">{rev.content}</p>
+                    <ReviewComments reviewId={rev._id} currentUser={currentUser ?? null} />
                   </div>
                 ))}
               </div>

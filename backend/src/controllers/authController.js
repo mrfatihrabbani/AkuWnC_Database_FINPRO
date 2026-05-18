@@ -1,4 +1,5 @@
 import User from '../models/models.mongodb/user.model.js';
+import { generateToken } from '../utils/tokenService.js';
 
 // Register Controller
 export const register = async (req, res) => {
@@ -31,8 +32,10 @@ export const login = async (req, res) => {
 
     // Check if user exists and use the model's instance method to verify password
     if (user && (await user.comparePassword(password))) {
+      const token = generateToken(user);
       res.status(200).json({ 
         message: "Login successful", 
+        token,
         user: { 
           username: user.username, 
           id: user._id 

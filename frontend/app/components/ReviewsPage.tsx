@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { StarIcon, HeartIcon } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
 import { reviewAPI, contentAPI } from "../config/api";
 import ProfileMovieModal from "./ProfileMovieModal";
+import ReviewComments from "./ReviewComments";
 
 interface ReviewUser {
   _id: string;
@@ -34,6 +35,8 @@ interface Review {
 interface ReviewsPageProps {
   currentUser?: string | null;
   onViewProfile?: (username: string) => void;
+  highlightReviewId?: string | null;
+  onClearHighlight?: () => void;
 }
 
 interface MoviePreview {
@@ -50,11 +53,37 @@ interface MoviePreview {
   totalRatings: number;
 }
 
-export default function ReviewsPage({ currentUser, onViewProfile }: ReviewsPageProps) {
+export default function ReviewsPage({ currentUser, onViewProfile, highlightReviewId, onClearHighlight }: ReviewsPageProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"popular" | "mine">("popular");
   const [previewMovie, setPreviewMovie] = useState<MoviePreview | null>(null);
+  const highlightRef = useRef<HTMLDivElement>(null);
+  const [blinking, setBlinking] = useState(false);
+
+  useEffect(() => {
+    if (highlightReviewId) {
+      setActiveTab("mine");
+      setBlinking(true);
+    }
+  }, [highlightReviewId]);
+
+  useEffect(() => {
+    if (highlightReviewId && !loading && reviews.length > 0) {
+      setTimeout(() => {
+        highlightRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+      // stop blink after 2s
+      const timer = setTimeout(() => setBlinking(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [highlightReviewId, loading, reviews]);
+
+  // reset highlight when user switch tab
+  useEffect(() => {
+    if (onClearHighlight) onClearHighlight();
+    setBlinking(false);
+  }, [activeTab]);
 
   const handleMovieClick = async (contentId: string) => {
     try {
@@ -175,7 +204,12 @@ export default function ReviewsPage({ currentUser, onViewProfile }: ReviewsPageP
           {reviews.map((review) => (
             <div
               key={review._id}
-              className="bg-[#16130e] rounded-xl p-5 hover:bg-[#2a2420] transition-colors"
+              ref={review._id === highlightReviewId ? highlightRef : undefined}
+              className={`rounded-xl p-5 transition-colors ${
+                review._id === highlightReviewId
+                  ? `bg-[#2a2420] ring-2 ring-[#c49148]${blinking ? ' animate-pulse' : ''}`
+                  : 'bg-[#16130e] hover:bg-[#2a2420]'
+              }`}
             >
               <div className="flex gap-4">
                 {/* poster */}
@@ -253,6 +287,7 @@ export default function ReviewsPage({ currentUser, onViewProfile }: ReviewsPageP
                     <span className="text-[#3d352c]">•</span>
                     <span className="text-[#a89880] text-xs">{timeAgo(review.createdAt)}</span>
                   </div>
+                  <ReviewComments reviewId={review._id} currentUser={currentUser ?? null} defaultOpen={review._id === highlightReviewId} />
                 </div>
               </div>
             </div>
