@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neo4j Performance Benchmark - AkuWnC Benchmark</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      color: #f8fafc;
+      border-bottom: 2px solid #3b82f6;
+      padding-bottom: 0.5rem;
+    }
+    .description {
+      color: #94a3b8;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .chart-container {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid #334155;
+    }
+    canvas { max-height: 450px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #334155;
+    }
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+      font-size: 0.85rem;
+    }
+    th {
+      background: #334155;
+      color: #93c5fd;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+    tr:hover td { background: #263548; }
+    td:first-child { font-weight: 500; }
+    .metric { color: #fbbf24; font-family: 'JetBrains Mono', monospace; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .badge-fast { background: #065f46; color: #6ee7b7; }
+    .badge-medium { background: #713f12; color: #fde047; }
+    .badge-slow { background: #7f1d1d; color: #fca5a5; }
+    .footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid #334155;
+      color: #64748b;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Neo4j Performance Benchmark</h1>
+    <p class="description">Performance benchmarks for Neo4j Aura (Free Instance) graph operations used in the AkuWnC platform. Tests include social graph traversal, collaborative filtering, content similarity, and relationship write operations. Each test ran 100 iterations.</p>
+    
+    <div class="chart-container">
+      <canvas id="benchChart"></canvas>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Operation</th>
+          <th>Median (ms)</th>
+          <th>Mean (ms)</th>
+          <th>P95 (ms)</th>
+          <th>P99 (ms)</th>
+          <th>Std Dev</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+    <tr>
+      <td>Get Following (1-hop traversal)</td>
+      <td class="metric">23.413</td>
+      <td class="metric">23.483</td>
+      <td class="metric">24.336</td>
+      <td class="metric">29.765</td>
+      <td class="metric">0.781</td>
+      <td><span class="badge badge-medium">MODERATE</span></td>
+    </tr>
+    <tr>
+      <td>Get Followers (1-hop reverse traversal)</td>
+      <td class="metric">23.113</td>
+      <td class="metric">23.22</td>
+      <td class="metric">24.298</td>
+      <td class="metric">29.383</td>
+      <td class="metric">0.804</td>
+      <td><span class="badge badge-medium">MODERATE</span></td>
+    </tr>
+    <tr>
+      <td>Follow User (MERGE relationship)</td>
+      <td class="metric">23.47</td>
+      <td class="metric">23.725</td>
+      <td class="metric">24.777</td>
+      <td class="metric">35.403</td>
+      <td class="metric">1.484</td>
+      <td><span class="badge badge-medium">MODERATE</span></td>
+    </tr>
+    <tr>
+      <td>Unfollow User (DELETE relationship)</td>
+      <td class="metric">23.136</td>
+      <td class="metric">23.318</td>
+      <td class="metric">24.308</td>
+      <td class="metric">30.188</td>
+      <td class="metric">0.898</td>
+      <td><span class="badge badge-medium">MODERATE</span></td>
+    </tr>
+    <tr>
+      <td>Rate Content (MERGE RATED relationship)</td>
+      <td class="metric">26.664</td>
+      <td class="metric">26.764</td>
+      <td class="metric">27.76</td>
+      <td class="metric">36.823</td>
+      <td class="metric">1.15</td>
+      <td><span class="badge badge-medium">MODERATE</span></td>
+    </tr>
+    <tr>
+      <td>Collaborative Filtering (Recommendations)</td>
+      <td class="metric">23.918</td>
+      <td class="metric">24.074</td>
+      <td class="metric">24.721</td>
+      <td class="metric">42.609</td>
+      <td class="metric">1.929</td>
+      <td><span class="badge badge-medium">MODERATE</span></td>
+    </tr>
+    <tr>
+      <td>Content Similarity (shared genres, 2-hop)</td>
+      <td class="metric">23.709</td>
+      <td class="metric">23.894</td>
+      <td class="metric">24.775</td>
+      <td class="metric">34.148</td>
+      <td class="metric">1.137</td>
+      <td><span class="badge badge-medium">MODERATE</span></td>
+    </tr>
+    <tr>
+      <td>Friend Activity Feed (2-hop: User→Friend→Movie)</td>
+      <td class="metric">23.144</td>
+      <td class="metric">25.049</td>
+      <td class="metric">24.047</td>
+      <td class="metric">196.999</td>
+      <td class="metric">17.31</td>
+      <td><span class="badge badge-medium">MODERATE</span></td>
+    </tr>
+    <tr>
+      <td>Count All Nodes (full scan)</td>
+      <td class="metric">22.843</td>
+      <td class="metric">22.959</td>
+      <td class="metric">23.873</td>
+      <td class="metric">26.261</td>
+      <td class="metric">0.609</td>
+      <td><span class="badge badge-medium">MODERATE</span></td>
+    </tr>
+    <tr>
+      <td>Shortest Path (between two users)</td>
+      <td class="metric">24.02</td>
+      <td class="metric">24.109</td>
+      <td class="metric">24.604</td>
+      <td class="metric">37.053</td>
+      <td class="metric">1.358</td>
+      <td><span class="badge badge-medium">MODERATE</span></td>
+    </tr>
+      </tbody>
+    </table>
+
+    <div class="footer">
+      AkuWnC Database Final Project &bull; Benchmark generated on 2026-05-21 &bull; 100 iterations per test
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('benchChart').getContext('2d');
+    new Chart(ctx, {"type":"bar","data":{"labels":["Get Following","Get Followers","Follow User","Unfollow User","Rate Content","Collaborative Filtering","Content Similarity","Friend Activity Feed","Count All Nodes","Shortest Path"],"datasets":[{"label":"Median Latency (ms)","data":[23.413,23.113,23.47,23.136,26.664,23.918,23.709,23.144,22.843,24.02],"backgroundColor":"rgba(16, 185, 129, 0.7)","borderColor":"rgba(16, 185, 129, 1)","borderWidth":1},{"label":"P95 Latency (ms)","data":[24.336,24.298,24.777,24.308,27.76,24.721,24.775,24.047,23.873,24.604],"backgroundColor":"rgba(239, 68, 68, 0.5)","borderColor":"rgba(239, 68, 68, 1)","borderWidth":1}]},"options":{"responsive":true,"plugins":{"title":{"display":true,"text":"Neo4j Operation Latency (ms)","color":"#f8fafc","font":{"size":16}},"legend":{"labels":{"color":"#e2e8f0"}}},"scales":{"x":{"ticks":{"color":"#94a3b8","maxRotation":45},"grid":{"color":"#334155"}},"y":{"ticks":{"color":"#94a3b8"},"grid":{"color":"#334155"},"title":{"display":true,"text":"Latency (ms)","color":"#94a3b8"}}}}});
+  </script>
+</body>
+</html>
