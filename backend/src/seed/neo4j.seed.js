@@ -97,6 +97,15 @@ const movies = [
   { title: 'One Piece Film: Gold', year: 2016},
 ]
 
+const series = [
+  { title: 'Attack on Titan', year: 2013 },
+  { title: 'Breaking Bad', year: 2008 },
+  { title: 'The Last of Us', year: 2023 },
+  { title: 'Game of Thrones', year: 2011 },
+  { title: 'The Witcher', year: 2019 },
+  { title: 'Arcane', year: 2021 },
+]
+
 const genres = [
   'Action', 'Adventure', 'Animation', 'Comedy', 'Crime',
   'Documentary', 'Drama', 'Family', 'Fantasy', 'History',
@@ -205,6 +214,15 @@ const ratings = [
   ['tester', 'Whiplash', 5],
 ]
 
+const seriesRatings = [
+  ['fatih', 'Attack on Titan', 5],
+  ['ryan', 'Attack on Titan', 5],
+  ['rauly', 'Breaking Bad', 5],
+   ['fatih', 'Game of Thrones', 4.5],
+  ['ryan', 'The Witcher', 4],
+  ['tester', 'Arcane', 5],
+]
+
 const wantsToWatch = [
   ['fatih', 'Blade Runner 2049'],
   ['ryan', 'Kubo and the Two Strings'],
@@ -246,6 +264,14 @@ async function seed() {
     }
     console.log(`Created ${movies.length} Movie nodes`)
 
+    for (const serie of series) {
+      await session.run(
+        `CREATE (:Series {title: $title, year: $year})`,
+        { title: serie.title, year: serie.year }
+      )
+    }
+    console.log(`Created ${series.length} Series nodes`)
+
     for (const genre of genres) {
       await session.run(
         `CREATE (:Genre {name: $name})`,
@@ -270,7 +296,16 @@ async function seed() {
         { user, movie, score }
       )
     }
-    console.log(`Created ${ratings.length} RATED relationships`)
+    console.log(`Created ${ratings.length} RATED relationships (Movies)`)
+
+    for (const [user, title, score] of seriesRatings) {
+      await session.run(
+        `MATCH (u:User {username: $user}), (s:Series {title: $title})
+         CREATE (u)-[:RATED {score: $score}]->(s)`,
+        { user, title, score }
+      )
+    }
+    console.log(`Created ${seriesRatings.length} RATED relationships (Series)`)
 
     let taggedCount = 0
     for (const [movieTitle, genreList] of Object.entries(movieGenres)) {
@@ -295,8 +330,8 @@ async function seed() {
     console.log(`Created ${wantsToWatch.length} WANTS_TO_WATCH relationships`)
 
     console.log('\n Neo4j seed complete!')
-    console.log(` Total: ${users.length} users, ${movies.length} movies, ${genres.length} genres`)
-    console.log(` Relationships: FOLLOWS (${follows.length}), RATED (${ratings.length}), TAGGED (${taggedCount}), WANTS_TO_WATCH (${wantsToWatch.length})`)
+    console.log(` Total: ${users.length} users, ${movies.length} movies, ${series.length} series, ${genres.length} genres`)
+    console.log(` Relationships: FOLLOWS (${follows.length}), RATED Movies (${ratings.length}), RATED Series (${seriesRatings.length}), TAGGED (${taggedCount}), WANTS_TO_WATCH (${wantsToWatch.length})`)
   } catch (err) {
     console.error('Seed error:', err)
   } finally {
