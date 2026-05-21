@@ -7,12 +7,13 @@ import User from '../models/models.mongodb/user.model.js'
 import Review from '../models/models.mongodb/review.model.js'
 import Watchlist from '../models/models.mongodb/watchlist.model.js'
 import AppInfo from '../models/models.mongodb/appingfo.model.js'
+import Comment from '../models/models.mongodb/comment.model.js';
 
 const users = [
-  { username: 'fatih', email: 'fatih@wncmail.com', password: 'fatih_password', bio: 'Horror, Action and sci-fi enthusiast' },
-  { username: 'rauly', email: 'rauly@wncmail.com', password: 'rauly_password', bio: 'Cinema lover. Especially for documentary.' },
-  { username: 'ryan', email: 'ryan@wncmail.com', password: 'ryan_password', bio: 'Huge weeb, likes animation, and action.' },
-  { username: 'tester', email: 'tester@wncmail.com', password: 'tester_password', bio: 'Documentary and world cinema.' },
+  { username: 'fatih', email: 'fatih@wncmail.com', password: 'fatih_password', bio: 'Horror, Action and sci-fi enthusiast', avatar: 'https://res.cloudinary.com/dzozq8ds9/image/upload/v1779373980/444b8f92410b3896456551a41f7e08c3_wbaopu.jpg' },
+  { username: 'rauly', email: 'rauly@wncmail.com', password: 'rauly_password', bio: 'Cinema lover. Especially for documentary.', avatar: 'https://res.cloudinary.com/dzozq8ds9/image/upload/v1779374130/1c752e32db95d8dd40c15b8b0f82efc6_zkb8b7.jpg' },
+  { username: 'ryan', email: 'ryan@wncmail.com', password: 'ryan_password', bio: 'Huge weeb, likes animation, and action.', avatar: 'https://res.cloudinary.com/dzozq8ds9/image/upload/v1778620063/letterboxd-avatars/zjnvjihm09gfmzaq5n7m.jpg' },
+  { username: 'tester', email: 'tester@wncmail.com', password: 'tester_password', bio: 'Documentary and world cinema.', avatar: 'https://res.cloudinary.com/dzozq8ds9/image/upload/v1779374129/f7ffeaf06408b4deeca1626505ec5ef6_bj5n55.jpg'},
   { username: 'koechengganteng', email: 'koecheng@wncmail.com', password: 'koecheng_password', bio: '' },
 ]
 
@@ -99,12 +100,166 @@ const movies = [
   { title: 'One Piece Film: Gold', year: 2016, director: 'Hiroaki Miyamoto', genres: ['Animation', 'Action', 'Adventure', 'Comedy', 'Fantasy'], synopsis: 'Luffy and his pirates can\'t wait to board the glittering Sin City ship known as Gran Tesoro, but they soon find themselves in way over their heads.', runtime: 120, language: 'English', poster: 'https://image.tmdb.org/t/p/w500/9PgiOFTLZXP7emlwcIt0yRasJ9h.jpg' },
 ]
 
+
+
+const series = [
+  { 
+    title: 'Attack on Titan', 
+    type: 'series', 
+    year: 2013, 
+    director: 'Tetsuro Araki', 
+    genres: ['Action', 'Animation', 'Drama', 'Fantasy', 'Horror'], 
+    synopsis: 'In a world where humanity shelters behind towering walls from man-eating Titans, a determined teen joins the elite Survey Corps to fight the giants and uncover the secrets of their origin.', 
+    runtime: 24, 
+    language: 'English', 
+    poster: 'https://image.tmdb.org/t/p/w500/hqRb1wyIVsaMukZElPBUXoJPqrR.jpg',
+    seasons: [
+      {
+        seasonNumber: 1,
+        episodes: [
+          { title: 'To You, in 2000 Years', episodeNumber: 1, synopsis: 'In a walled city besieged by fear of Titans, impulsive Eren dreams of the world beyond the walls - until a sudden attack shatters the fragile peace and changes everything.', runtime: 24 },
+          { title: 'That Day', episodeNumber: 2, synopsis: 'As Titans overrun Shiganshina, Eren, Mikasa, and Armin flee for their lives while the fall of their home thrusts them into a harsh new reality.', runtime: 24 },
+          { title: 'A Dim Light Amid Despair', episodeNumber: 3, synopsis: 'As Eren begins Cadet Corps training, a difficult maneuvering test threatens his dream of joining humanity\'s fight against the Titans.', runtime: 24 }
+        ]
+      },
+      {
+        seasonNumber: 2,
+        episodes: [
+          { title: 'Beast Titan', episodeNumber: 1, synopsis: 'With a disturbing discovery inside the wall raising new questions, the Scouts race to respond when Titans are reported within Wall Rose.', runtime: 24 },
+          { title: 'I\'m Home', episodeNumber: 2, synopsis: 'Sasha and Connie rush toward their home villages as Titans appear inside Wall Rose, while the Survey Corps investigates the growing crisis.', runtime: 24 }
+        ]
+      }
+    ]
+  },
+  { 
+    title: 'Breaking Bad', 
+    type: 'series', 
+    year: 2008, 
+    director: 'Vince Gilligan', 
+    genres: ['Crime', 'Drama', 'Thriller'], 
+    synopsis: 'A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student to secure his family\'s future.', 
+    runtime: 47, 
+    language: 'English', 
+    poster: 'https://image.tmdb.org/t/p/w500/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg',
+    seasons: [
+      {
+        seasonNumber: 1,
+        episodes: [
+          { title: 'Pilot', episodeNumber: 1, synopsis: 'Facing a life-altering diagnosis, chemistry teacher Walter White teams with former student Jesse Pinkman to cook meth, hoping to secure his family\'s future.', runtime: 58 },
+          { title: 'Cat\'s in the Bag...', episodeNumber: 2, synopsis: 'Walt and Jesse face the messy fallout from their first cook, scrambling to erase evidence and deal with a dangerous loose end as Skyler grows uneasy over Walt\'s secretive behavior.', runtime: 48 },
+          { title: '...And the Bag\'s in the River', episodeNumber: 3, synopsis: 'With a dangerous captive in Jesse\'s basement, Walt faces a moral dilemma while scrambling to cover his tracks at home and keep their fledgling operation alive.', runtime: 48 }
+        ]
+      },
+      {
+        seasonNumber: 2,
+        episodes: [
+          { title: 'Seven Thirty-Seven', episodeNumber: 1, synopsis: 'Walt and Jesse are held captive by ruthless dealer Tuco and scramble for a way out, while Skyler\'s doubts about Walt\'s late nights and lies intensify.', runtime: 48 },
+          { title: 'Grilled', episodeNumber: 2, synopsis: 'Held captive by a volatile drug dealer in a remote desert hideout, Walt and Jesse plot their escape while Hank investigates Jesse\'s disappearance and follows a lead that brings him dangerously close.', runtime: 48 }
+        ]
+      }
+    ]
+  },
+  { 
+    title: 'The Last of Us', 
+    type: 'series', 
+    year: 2023, 
+    director: 'Craig Mazin', 
+    genres: ['Action', 'Adventure', 'Drama', 'Horror'], 
+    synopsis: 'After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity\'s last hope.', 
+    runtime: 60, 
+    language: 'English', 
+    poster: 'https://image.tmdb.org/t/p/w500/dmo6TYuuJgaYinXBPjrgG9mB5od.jpg',
+    seasons: [
+      {
+        seasonNumber: 1,
+        episodes: [
+          { title: 'When You\'re Lost in the Darkness', episodeNumber: 1, synopsis: 'Twenty years after a fungal outbreak ravages the planet, survivors Joel and Tess are tasked with a mission that could change everything.', runtime: 81 },
+          { title: 'Infected', episodeNumber: 2, synopsis: 'After escaping the QZ, Joel and Tess clash over Ellie\'s fate while navigating the ruins of a long-abandoned Boston.', runtime: 55 },
+          { title: 'Long, Long Time', episodeNumber: 3, synopsis: 'When an unknown person approaches his compound, survivalist Bill forges an unlikely connection. Later, Joel and Ellie seek Bill\'s guidance.', runtime: 75 }
+        ]
+      }
+    ]
+  },
+  { 
+    title: 'Arcane', 
+    type: 'series', 
+    year: 2021, 
+    director: 'Pascal Charrue, Arnaud Delord', 
+    genres: ['Action', 'Adventure', 'Animation', 'Drama', 'Fantasy', 'Science Fiction'], 
+    synopsis: 'Amid the stark discord of twin cities Piltover and Zaun, two sisters fight on rival sides of a war between magic technologies and clashing convictions.', 
+    runtime: 40, 
+    language: 'English', 
+    poster: 'https://image.tmdb.org/t/p/w500/abf8tHznhSvl9BAElD2cQeRr7do.jpg',
+    seasons: [
+      {
+        seasonNumber: 1,
+        episodes: [
+          { title: 'Welcome to the Playground', episodeNumber: 1, synopsis: 'Orphaned sisters Vi and Powder bring trouble to Zaun\'s underground streets in the wake of a heist in posh Piltover.', runtime: 42 },
+          { title: 'Some Mysteries Are Better Left Unsolved', episodeNumber: 2, synopsis: 'Idealistic inventor Jayce attempts to harness magic through science --- despite his mentor\'s warning. Criminal kingpin Silco tests a powerful substance.', runtime: 40 },
+          { title: 'The Base Violence Necessary for Change', episodeNumber: 3, synopsis: 'An epic showdown between old rivals results in a fateful moment for Zaun. Jayce and Viktor risk it all for their research.', runtime: 41 }
+        ]
+      }
+    ]
+  },
+  { 
+    title: 'The Witcher', 
+    type: 'series', 
+    year: 2019, 
+    director: 'Lauren Schmidt Hissrich', 
+    genres: ['Action', 'Adventure', 'Drama', 'Fantasy'], 
+    synopsis: 'Geralt of Rivia, a solitary monster hunter, struggles to find his place in a world where people often prove more wicked than beasts.', 
+    runtime: 55, 
+    language: 'English', 
+    poster: 'https://image.tmdb.org/t/p/w500/AoGsDM02UVt0npBA8OvpDcZbaMi.jpg',
+    seasons: [
+      {
+        seasonNumber: 1,
+        episodes: [
+          { title: 'The End\'s Beginning', episodeNumber: 1, synopsis: 'Hostile townsfolk and a cunning mage greet Geralt in the town of Blaviken. Ciri finds her royal world upended when Nilfgaard sets its sights on Cintra.', runtime: 61 },
+          { title: 'Four Marks', episodeNumber: 2, synopsis: 'Bullied and neglected, Yennefer accidentally finds a means of escape. Geralt\'s hunt for a so-called devil goes to hell. Ciri seeks safety in numbers.', runtime: 60 },
+          { title: 'Betrayer Moon', episodeNumber: 3, synopsis: 'Geralt takes on another Witcher\'s unfinished business in a kingdom stalked by a ferocious beast. At a brutal cost, Yennefer forges a magical new future.', runtime: 67 }
+        ]
+      }
+    ]
+  },
+  { 
+    title: 'Game of Thrones', 
+    type: 'series', 
+    year: 2011, 
+    director: 'David Benioff, D.B. Weiss', 
+    genres: ['Action', 'Adventure', 'Drama', 'Fantasy'], 
+    synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.', 
+    runtime: 55, 
+    language: 'English', 
+    poster: 'https://image.tmdb.org/t/p/w500/1XS1oqL89opfnbLl8WnZY1O1uJx.jpg',
+    seasons: [
+      {
+        seasonNumber: 1,
+        episodes: [
+          { title: 'Winter Is Coming', episodeNumber: 1, synopsis: 'King Robert asks Eddard Stark to leave Winterfell for court, where Lannister power looms.', runtime: 61 },
+          { title: 'The Kingsroad', episodeNumber: 2, synopsis: 'Ned and his daughters ride south with the king while Jon and Tyrion head to the Wall; across the Narrow Sea, Daenerys faces a new life among the Dothraki.', runtime: 56 },
+          { title: 'Lord Snow', episodeNumber: 3, synopsis: 'In King\'s Landing, Ned takes up his new post as Hand of the King while Arya begins sword lessons. At the Wall, Jon earns the nickname "Lord Snow."', runtime: 58 }
+        ]
+      },
+      {
+        seasonNumber: 2,
+        episodes: [
+          { title: 'The North Remembers', episodeNumber: 1, synopsis: 'Robb Stark is proclaimed King.', runtime: 53 },
+          { title: 'The Night Lands', episodeNumber: 2, synopsis: 'Theon returns home.', runtime: 54 }
+        ]
+      }
+    ]
+  },
+]
+
 async function seed() {
   try {
     await mongoose.connect(process.env.MONGO_URI)
     console.log('Connected to MongoDB Atlas\n')
 
-    // upsert users
+    await Content.deleteMany({ type: 'series' })
+    console.log('Cleared existing series')
+
     const insertedUsers = await Promise.all(users.map(async (u) => {
       const existing = await User.findOne({ email: u.email })
       if (existing) {
@@ -116,31 +271,31 @@ async function seed() {
     }))
     console.log(`Upserted ${insertedUsers.length} users`)
 
-    // upsert content
-    const moviesWithType = movies.map(m => ({ ...m, type: m.type || 'movie' }))
+    const allContent = [...movies, ...series]
+    const allContentWithType = allContent.map(item => ({ ...item, type: item.type || 'movie' }))
+
     let contentCreated = 0
-    const insertedMovies = await Promise.all(moviesWithType.map(async (m) => {
-      const existing = await Content.findOne({ title: m.title })
+    const insertedMovies = await Promise.all(allContentWithType.map(async (item) => {
+      const existing = await Content.findOne({ title: item.title })
       if (existing) {
-        Object.assign(existing, m)
+        Object.assign(existing, item)
         return existing.save()
       }
       contentCreated++
-      return Content.create(m)
+      return Content.create(item)
     }))
     console.log(`Upserted ${insertedMovies.length} content items (${contentCreated} new)`)
 
     const u = (name)  => insertedUsers.find(x => x.username === name)
     const m = (title) => insertedMovies.find(x => x.title === title)
 
-    // upsert reviews
     const seedReviews = [
       { user: u('fatih')._id, contentId: m('Hereditary')._id, rating: 5, content: 'Most terrifying film I have seen.'},
       { user: u('fatih')._id, contentId: m('Get Out')._id, rating: 5, content: 'Peele is a genius.'},
       { user: u('fatih')._id, contentId: m('Mad Max: Fury Road')._id, rating: 4.5, content: 'Pure adrenaline from start to finish.'},
       { user: u('fatih')._id, contentId: m('Interstellar')._id, rating: 4, content: 'Visually stunning but emotionally cold.'},
       { user: u('rauly')._id, contentId: m('Citizenfour')._id, rating: 5, content: 'One of the most important docs ever made.'},
-      { user: u('rauly')._id, contentId: m('Amy')._id, rating: 5, content: 'Devastating and beautiful.'},
+      { user: u('rauly')._id, contentId: m('Amy')._id, rating: 5, content: 'This is art.'},
       { user: u('rauly')._id, contentId: m('Roma')._id, rating: 4.5, content: "Cuaron's masterwork."},
       { user: u('rauly')._id, contentId: m('Free Solo')._id, rating: 5, content: 'Genuinely nerve-wracking.'},
       { user: u('ryan')._id, contentId: m('Your Name')._id, rating: 5, content: 'Cried three times.'},
@@ -150,6 +305,8 @@ async function seed() {
       { user: u('tester')._id, contentId: m('The Look of Silence')._id, rating: 5, content: 'Haunting and essential.'},
       { user: u('tester')._id, contentId: m('Arrival')._id, rating: 5, content: 'The best sci-fi in a decade.'},
       { user: u('tester')._id, contentId: m('Whiplash')._id, rating: 5, content: 'Fletcher is one of cinema\'s great villains.'},
+      { user: u('ryan')._id, contentId: m('Birdman')._id, rating: 5, content: 'buwung puyuh' },
+      { user: u('ryan')._id, contentId: m('One Piece Film: Red')._id, rating: 5, content: 'SHINJIDAI WA SONO MIRAI DA !' },
     ]
 
     let reviewsCreated = 0
@@ -162,7 +319,7 @@ async function seed() {
     }
     console.log(`Seed reviews: ${reviewsCreated} new, ${seedReviews.length - reviewsCreated} already existed`)
 
-    // recalc ratings
+
     const allReviewedIds = await Review.distinct('contentId')
     for (const cid of allReviewedIds) {
       const content = await Content.findById(cid)
@@ -176,7 +333,31 @@ async function seed() {
     }
     console.log('Updated content average ratings')
 
-    // upsert watchlist
+    const seedComments = [
+      { review: (await Review.findOne({ content: 'Peele is a genius.' }))._id, user: 'rauly', text: 'Completely agree! Get Out is a masterpiece.' },
+      { review: (await Review.findOne({ content: 'Pure adrenaline from start to finish.' }))._id, user: 'ryan', text: 'The action scenes are incredible.' },
+      { review: (await Review.findOne({ content: "Cuaron's masterwork." }))._id, user: 'fatih', text: 'The cinematography is breathtaking.' }, 
+      { review: (await Review.findOne({ content: 'Best animated film in years.' }))._id, user: 'tester', text: 'The animation style is revolutionary.' },
+      { review: (await Review.findOne({ content: 'Cried three times.' }))._id, user: 'rauly', text: 'Same here. Such an emotional ride.' },
+      { review: (await Review.findOne({ content: "Fletcher is one of cinema's great villains." }))._id, user: 'ryan', text: 'JK Simmons was terrifying!' }, 
+      { review: (await Review.findOne({ content: 'Most terrifying film I have seen.' }))._id, user: 'tester', text: 'The ending still haunts me.' },
+      { review: (await Review.findOne({ content: 'The best sci-fi in a decade.' }))._id, user: 'fatih', text: 'The linguistics concept is fascinating.' },
+      { review: (await Review.findOne({ content: 'buwung puyuh' }))._id, user: 'fatih', text: 'Birdman is so underrated!' },
+      { review: (await Review.findOne({ content: 'SHINJIDAI WA SONO MIRAI DA !' }))._id, user: 'rauly', text: 'One Piece fans unite!' },
+      { review: (await Review.findOne({ content: 'buwung puyuh' }))._id, user: 'fatih', text: 'Birdman!!!' },
+      { review: (await Review.findOne({ content: 'SHINJIDAI WA SONO MIRAI DA !' }))._id, user: 'rauly', text: 'THE ONE PIECE!!!' },
+    ]
+
+    let commentsCreated = 0
+    for (const c of seedComments) {
+      const exists = await Comment.findOne({ review: c.review, user: c.user })
+      if (!exists) {
+        await Comment.create(c)
+        commentsCreated++
+      }
+    }
+    console.log(`Seed comments: ${commentsCreated} new`)
+
     const seedWatchlists = [
       { user: u('fatih')._id, movie: m('Blade Runner 2049')._id, status: 'want_to_watch' },
       { user: u('fatih')._id, movie: m('The Hateful Eight')._id, status: 'watched', watchedAt: new Date('2024-02-10') },
@@ -196,7 +377,6 @@ async function seed() {
     }
     console.log(`Seed watchlist: ${watchlistCreated} new, ${seedWatchlists.length - watchlistCreated} already existed`)
 
-    // upsert app info
     const existingInfo = await AppInfo.findOne()
     if (!existingInfo) {
       await AppInfo.create({
