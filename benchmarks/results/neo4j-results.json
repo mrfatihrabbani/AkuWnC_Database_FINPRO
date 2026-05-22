@@ -1,0 +1,123 @@
+{
+  "benchmark": "Neo4j Performance",
+  "database": "Neo4j Aura (Free Instance)",
+  "timestamp": "2026-05-21T20:58:48.597Z",
+  "environment": {
+    "node_version": "v24.14.1",
+    "os": "win32",
+    "iterations": 100,
+    "driver_version": "6.x"
+  },
+  "results": [
+    {
+      "operation": "Get Following (1-hop traversal)",
+      "iterations": 100,
+      "min_ms": 22.507,
+      "max_ms": 29.765,
+      "mean_ms": 23.483,
+      "median_ms": 23.413,
+      "p95_ms": 24.336,
+      "p99_ms": 29.765,
+      "std_dev_ms": 0.781
+    },
+    {
+      "operation": "Get Followers (1-hop reverse traversal)",
+      "iterations": 100,
+      "min_ms": 22.168,
+      "max_ms": 29.383,
+      "mean_ms": 23.22,
+      "median_ms": 23.113,
+      "p95_ms": 24.298,
+      "p99_ms": 29.383,
+      "std_dev_ms": 0.804
+    },
+    {
+      "operation": "Follow User (MERGE relationship)",
+      "iterations": 100,
+      "min_ms": 22.654,
+      "max_ms": 35.403,
+      "mean_ms": 23.725,
+      "median_ms": 23.47,
+      "p95_ms": 24.777,
+      "p99_ms": 35.403,
+      "std_dev_ms": 1.484
+    },
+    {
+      "operation": "Unfollow User (DELETE relationship)",
+      "iterations": 100,
+      "min_ms": 22.412,
+      "max_ms": 30.188,
+      "mean_ms": 23.318,
+      "median_ms": 23.136,
+      "p95_ms": 24.308,
+      "p99_ms": 30.188,
+      "std_dev_ms": 0.898
+    },
+    {
+      "operation": "Rate Content (MERGE RATED relationship)",
+      "iterations": 100,
+      "min_ms": 25.336,
+      "max_ms": 36.823,
+      "mean_ms": 26.764,
+      "median_ms": 26.664,
+      "p95_ms": 27.76,
+      "p99_ms": 36.823,
+      "std_dev_ms": 1.15
+    },
+    {
+      "operation": "Collaborative Filtering (Recommendations)",
+      "iterations": 100,
+      "min_ms": 22.877,
+      "max_ms": 42.609,
+      "mean_ms": 24.074,
+      "median_ms": 23.918,
+      "p95_ms": 24.721,
+      "p99_ms": 42.609,
+      "std_dev_ms": 1.929
+    },
+    {
+      "operation": "Content Similarity (shared genres, 2-hop)",
+      "iterations": 100,
+      "min_ms": 22.997,
+      "max_ms": 34.148,
+      "mean_ms": 23.894,
+      "median_ms": 23.709,
+      "p95_ms": 24.775,
+      "p99_ms": 34.148,
+      "std_dev_ms": 1.137
+    },
+    {
+      "operation": "Friend Activity Feed (2-hop: User→Friend→Movie)",
+      "iterations": 100,
+      "min_ms": 22.599,
+      "max_ms": 196.999,
+      "mean_ms": 25.049,
+      "median_ms": 23.144,
+      "p95_ms": 24.047,
+      "p99_ms": 196.999,
+      "std_dev_ms": 17.31
+    },
+    {
+      "operation": "Count All Nodes (full scan)",
+      "iterations": 100,
+      "min_ms": 22.154,
+      "max_ms": 26.261,
+      "mean_ms": 22.959,
+      "median_ms": 22.843,
+      "p95_ms": 23.873,
+      "p99_ms": 26.261,
+      "std_dev_ms": 0.609
+    },
+    {
+      "operation": "Shortest Path (between two users)",
+      "iterations": 100,
+      "min_ms": 23.064,
+      "max_ms": 37.053,
+      "mean_ms": 24.109,
+      "median_ms": 24.02,
+      "p95_ms": 24.604,
+      "p99_ms": 37.053,
+      "std_dev_ms": 1.358
+    }
+  ]
+}

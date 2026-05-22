@@ -1,0 +1,128 @@
+{
+  "benchmark": "MongoDB Performance",
+  "database": "MongoDB Atlas (M0 Free Tier)",
+  "timestamp": "2026-05-21T20:58:08.062Z",
+  "environment": {
+    "node_version": "v24.14.1",
+    "os": "win32",
+    "iterations": 100,
+    "dataset": {
+      "content_documents": 86,
+      "review_documents": 17,
+      "user_documents": 5,
+      "watchlist_documents": 9
+    }
+  },
+  "results": [
+    {
+      "operation": "Read Single Document (findById)",
+      "iterations": 100,
+      "min_ms": 21.319,
+      "max_ms": 22.733,
+      "mean_ms": 21.833,
+      "median_ms": 21.793,
+      "p95_ms": 22.23,
+      "p99_ms": 22.733,
+      "std_dev_ms": 0.231
+    },
+    {
+      "operation": "Text Search ($text index)",
+      "iterations": 100,
+      "min_ms": 21.58,
+      "max_ms": 28.513,
+      "mean_ms": 22.246,
+      "median_ms": 22.011,
+      "p95_ms": 22.784,
+      "p99_ms": 28.513,
+      "std_dev_ms": 1.004
+    },
+    {
+      "operation": "Indexed Query (genre + type)",
+      "iterations": 100,
+      "min_ms": 21.91,
+      "max_ms": 25.73,
+      "mean_ms": 23.112,
+      "median_ms": 22.981,
+      "p95_ms": 24.707,
+      "p99_ms": 25.73,
+      "std_dev_ms": 0.824
+    },
+    {
+      "operation": "Aggregation Pipeline (avgRatingByGenre)",
+      "iterations": 100,
+      "min_ms": 22.235,
+      "max_ms": 33.888,
+      "mean_ms": 22.91,
+      "median_ms": 22.782,
+      "p95_ms": 23.386,
+      "p99_ms": 33.888,
+      "std_dev_ms": 1.179
+    },
+    {
+      "operation": "Paginated Browse (skip + limit + sort)",
+      "iterations": 100,
+      "min_ms": 22.204,
+      "max_ms": 35.987,
+      "mean_ms": 22.865,
+      "median_ms": 22.685,
+      "p95_ms": 23.344,
+      "p99_ms": 35.987,
+      "std_dev_ms": 1.356
+    },
+    {
+      "operation": "Population/Join (Review → User + Content)",
+      "iterations": 100,
+      "min_ms": 42.018,
+      "max_ms": 63.903,
+      "mean_ms": 46.586,
+      "median_ms": 43.939,
+      "p95_ms": 61.681,
+      "p99_ms": 63.903,
+      "std_dev_ms": 5.925
+    },
+    {
+      "operation": "Insert Single Document",
+      "iterations": 100,
+      "min_ms": 23.629,
+      "max_ms": 36.869,
+      "mean_ms": 24.376,
+      "median_ms": 24.201,
+      "p95_ms": 24.933,
+      "p99_ms": 36.869,
+      "std_dev_ms": 1.296
+    },
+    {
+      "operation": "Update Single Document (findByIdAndUpdate)",
+      "iterations": 100,
+      "min_ms": 23.457,
+      "max_ms": 36.603,
+      "mean_ms": 24.664,
+      "median_ms": 24.234,
+      "p95_ms": 28.629,
+      "p99_ms": 36.603,
+      "std_dev_ms": 2.041
+    },
+    {
+      "operation": "Count Documents (with filter)",
+      "iterations": 100,
+      "min_ms": 21.604,
+      "max_ms": 23.572,
+      "mean_ms": 22.051,
+      "median_ms": 22.019,
+      "p95_ms": 22.386,
+      "p99_ms": 23.572,
+      "std_dev_ms": 0.248
+    },
+    {
+      "operation": "Watchlist Lookup (compound index)",
+      "iterations": 100,
+      "min_ms": 43.04,
+      "max_ms": 59.652,
+      "mean_ms": 44.213,
+      "median_ms": 43.709,
+      "p95_ms": 48.432,
+      "p99_ms": 59.652,
+      "std_dev_ms": 2.144
+    }
+  ]
+}

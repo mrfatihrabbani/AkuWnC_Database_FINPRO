@@ -1,0 +1,11 @@
+operation,iterations,min_ms,max_ms,mean_ms,median_ms,p95_ms,p99_ms,std_dev_ms
+"Get Following (1-hop traversal)",100,22.507,29.765,23.483,23.413,24.336,29.765,0.781
+"Get Followers (1-hop reverse traversal)",100,22.168,29.383,23.22,23.113,24.298,29.383,0.804
+"Follow User (MERGE relationship)",100,22.654,35.403,23.725,23.47,24.777,35.403,1.484
+"Unfollow User (DELETE relationship)",100,22.412,30.188,23.318,23.136,24.308,30.188,0.898
+"Rate Content (MERGE RATED relationship)",100,25.336,36.823,26.764,26.664,27.76,36.823,1.15
+"Collaborative Filtering (Recommendations)",100,22.877,42.609,24.074,23.918,24.721,42.609,1.929
+"Content Similarity (shared genres, 2-hop)",100,22.997,34.148,23.894,23.709,24.775,34.148,1.137
+"Friend Activity Feed (2-hop: User→Friend→Movie)",100,22.599,196.999,25.049,23.144,24.047,196.999,17.31
+"Count All Nodes (full scan)",100,22.154,26.261,22.959,22.843,23.873,26.261,0.609
+"Shortest Path (between two users)",100,23.064,37.053,24.109,24.02,24.604,37.053,1.358

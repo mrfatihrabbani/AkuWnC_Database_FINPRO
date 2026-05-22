@@ -1,0 +1,7 @@
+operation,iterations,min_ms,max_ms,mean_ms,median_ms,p95_ms,p99_ms,std_dev_ms
+"Rate Content Flow (Neo4j write + MongoDB recalc)",50,66.712,82.76,69.353,68.336,77.521,82.76,2.938
+"User Profile Page (MongoDB user + Neo4j social)",50,102.176,118.354,104.917,103.667,113.017,118.354,3.577
+"Content Detail + Similar (MongoDB read + Neo4j traversal)",50,41.415,208.35,46.071,42.292,53.08,208.35,23.314
+"Recommendation Pipeline (Neo4j CF + MongoDB bulk lookup)",50,41.782,55.999,42.731,42.417,44.338,55.999,2.014
+"Home Feed (Neo4j activity + MongoDB reviews + top-rated)",50,83.152,92.409,84.611,84.147,89.39,92.409,1.907
+"Follow User Flow (Neo4j relationship + MongoDB user lookup)",50,40.709,224.387,45.834,41.684,55.552,224.387,25.674

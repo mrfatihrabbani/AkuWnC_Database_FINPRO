@@ -1,0 +1,82 @@
+{
+  "benchmark": "Combined (Cross-Database) Performance",
+  "databases": [
+    "MongoDB Atlas (M0 Free Tier)",
+    "Neo4j Aura (Free Instance)"
+  ],
+  "timestamp": "2026-05-21T20:59:19.352Z",
+  "environment": {
+    "node_version": "v24.14.1",
+    "os": "win32",
+    "iterations": 50,
+    "note": "Each operation involves network calls to both MongoDB and Neo4j"
+  },
+  "results": [
+    {
+      "operation": "Rate Content Flow (Neo4j write + MongoDB recalc)",
+      "iterations": 50,
+      "min_ms": 66.712,
+      "max_ms": 82.76,
+      "mean_ms": 69.353,
+      "median_ms": 68.336,
+      "p95_ms": 77.521,
+      "p99_ms": 82.76,
+      "std_dev_ms": 2.938
+    },
+    {
+      "operation": "User Profile Page (MongoDB user + Neo4j social)",
+      "iterations": 50,
+      "min_ms": 102.176,
+      "max_ms": 118.354,
+      "mean_ms": 104.917,
+      "median_ms": 103.667,
+      "p95_ms": 113.017,
+      "p99_ms": 118.354,
+      "std_dev_ms": 3.577
+    },
+    {
+      "operation": "Content Detail + Similar (MongoDB read + Neo4j traversal)",
+      "iterations": 50,
+      "min_ms": 41.415,
+      "max_ms": 208.35,
+      "mean_ms": 46.071,
+      "median_ms": 42.292,
+      "p95_ms": 53.08,
+      "p99_ms": 208.35,
+      "std_dev_ms": 23.314
+    },
+    {
+      "operation": "Recommendation Pipeline (Neo4j CF + MongoDB bulk lookup)",
+      "iterations": 50,
+      "min_ms": 41.782,
+      "max_ms": 55.999,
+      "mean_ms": 42.731,
+      "median_ms": 42.417,
+      "p95_ms": 44.338,
+      "p99_ms": 55.999,
+      "std_dev_ms": 2.014
+    },
+    {
+      "operation": "Home Feed (Neo4j activity + MongoDB reviews + top-rated)",
+      "iterations": 50,
+      "min_ms": 83.152,
+      "max_ms": 92.409,
+      "mean_ms": 84.611,
+      "median_ms": 84.147,
+      "p95_ms": 89.39,
+      "p99_ms": 92.409,
+      "std_dev_ms": 1.907
+    },
+    {
+      "operation": "Follow User Flow (Neo4j relationship + MongoDB user lookup)",
+      "iterations": 50,
+      "min_ms": 40.709,
+      "max_ms": 224.387,
+      "mean_ms": 45.834,
+      "median_ms": 41.684,
+      "p95_ms": 55.552,
+      "p99_ms": 224.387,
+      "std_dev_ms": 25.674
+    }
+  ]
+}
