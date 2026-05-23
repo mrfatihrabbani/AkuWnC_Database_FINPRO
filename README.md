@@ -33,25 +33,8 @@ Implementing Database Systems using the Combination of MongoDB & Neo4j
 
 --------------------------------------------------------------
 **Project Structure**
-benchmarks/
-├── README.md                         # This file
-├── scripts/
-│   ├── benchmark-mongo.js            # MongoDB performance tests
-│   ├── benchmark-neo4j.js            # Neo4j performance tests
-│   ├── benchmark-combined.js         # Cross-database operation benchmarks
-│   └── generate-plots.js            # Generates HTML chart visualizations
-├── results/
-│   ├── mongo-results.json            # MongoDB raw results (JSON)
-│   ├── mongo-results.csv             # MongoDB raw results (CSV)
-│   ├── neo4j-results.json            # Neo4j raw results (JSON)
-│   ├── neo4j-results.csv             # Neo4j raw results (CSV)
-│   ├── combined-results.json         # Combined operation results (JSON)
-│   └── combined-results.csv          # Combined operation results (CSV)
-└── plots/
-    ├── mongo-operations.html         # MongoDB operation latency chart
-    ├── neo4j-operations.html         # Neo4j operation latency chart
-    └── comparison-chart.html         # Side-by-side comparison chart
-	
+<a href="https://imgbb.com/"><img src="https://i.ibb.co.com/xtGtf1TX/Screenshot-2026-05-23-205904.png" alt="Screenshot 2026 05 23 205904" border="0"></a>
+
 -----------------------------------------------------------
 
 
