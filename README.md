@@ -76,6 +76,11 @@ About Page
 <a href="https://ibb.co.com/BKjN1N2k"><img src="https://i.ibb.co.com/WpFtTtvC/Whats-App-Image-2026-05-23-at-20-34-05.jpg" alt="Whats-App-Image-2026-05-23-at-20-34-05" border="0"></a>
 
 --------------------------------------------------------------------------------------------------------
+**References**
+All Movie and Series information are sourced from: https://www.imdb.com/
+All Movies and Series image posters are sourced from: https://www.themoviedb.org/
+
+------------------------------------------------------------------------------------------------------------
 **Deployment Steps**
 ...
 
