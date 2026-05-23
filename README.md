@@ -6,7 +6,7 @@ The Cinema Warehouse: Your Perfect Movie & Series Enthusiasts App
 --------------------------------------------------------------
 <a href="https://ibb.co.com/gL2jBSwk"><img src="https://i.ibb.co.com/NdvVH9pc/Aku-Wn-C-Final-Project-DBS.png" alt="Aku-Wn-C-Final-Project-DBS" border="0"></a>
 
-**This website is created by:**
+**This website is created by:**  
 Mochammad Rafly Fatih Rabbani - 2406369021  
 Ryan Gazendra Irawan - 2406368952  
 Raul Sumaryada - 2406450466  
