@@ -113,6 +113,15 @@ const genres = [
   'TV Movie', 'Thriller', 'War', 'Western'
 ]
 
+const seriesGenres = {
+  'Attack on Titan': ['Action', 'Animation', 'Drama', 'Fantasy', 'Horror'],
+  'Breaking Bad': ['Crime', 'Drama', 'Thriller'],
+  'The Last of Us': ['Action', 'Adventure', 'Drama', 'Horror'],
+  'Game of Thrones': ['Action', 'Adventure', 'Drama', 'Fantasy'],
+  'The Witcher': ['Action', 'Adventure', 'Drama', 'Fantasy'],
+  'Arcane': ['Action', 'Adventure', 'Animation', 'Drama', 'Fantasy', 'Science Fiction'],
+}
+
 const movieGenres = {
   'A Girl Walks Home Alone at Night': ['Horror', 'Romance', 'Thriller', 'Western'],
   'American Sniper': ['Action', 'Drama', 'History', 'War'],
@@ -227,6 +236,10 @@ const wantsToWatch = [
   ['fatih', 'Blade Runner 2049'],
   ['ryan', 'Kubo and the Two Strings'],
   ['tester', 'Sicario'],
+  ['fatih', 'Attack on Titan'],
+  ['rauly', 'Breaking Bad'],
+  ['ryan', 'The Witcher'],
+  ['tester', 'Arcane'],
 ]
 
 const follows = [
@@ -320,18 +333,40 @@ async function seed() {
     }
     console.log(`Created ${taggedCount} TAGGED relationships`)
 
-    for (const [user, movie] of wantsToWatch) {
+    let seriesTaggedCount = 0
+    for (const [seriesTitle, genreList] of Object.entries(seriesGenres)) {
+      for (const genreName of genreList) {
+        await session.run(
+          `MATCH (s:Series {title: $seriesTitle}), (g:Genre {name: $genreName})
+           CREATE (s)-[:TAGGED]->(g)`,
+          { seriesTitle, genreName }
+        )
+        seriesTaggedCount++
+      }
+    }
+    console.log(`Created ${seriesTaggedCount} TAGGED relationships for Series`)
+
+    for (const [user, title] of wantsToWatch) {
+    const movieResult = await session.run(
+      `MATCH (u:User {username: $user}), (m:Movie {title: $title})
+      CREATE (u)-[:WANTS_TO_WATCH]->(m)
+      RETURN m`,
+      { user, title }
+    )
+    
+    if (movieResult.records.length === 0) {
       await session.run(
-        `MATCH (u:User {username: $user}), (m:Movie {title: $movie})
-         CREATE (u)-[:WANTS_TO_WATCH]->(m)`,
-        { user, movie }
+        `MATCH (u:User {username: $user}), (s:Series {title: $title})
+        CREATE (u)-[:WANTS_TO_WATCH]->(s)`,
+        { user, title }
       )
     }
+  }
     console.log(`Created ${wantsToWatch.length} WANTS_TO_WATCH relationships`)
 
     console.log('\n Neo4j seed complete!')
     console.log(` Total: ${users.length} users, ${movies.length} movies, ${series.length} series, ${genres.length} genres`)
-    console.log(` Relationships: FOLLOWS (${follows.length}), RATED Movies (${ratings.length}), RATED Series (${seriesRatings.length}), TAGGED (${taggedCount}), WANTS_TO_WATCH (${wantsToWatch.length})`)
+    console.log(` Relationships: FOLLOWS (${follows.length}), RATED Movies (${ratings.length}), RATED Series (${seriesRatings.length}), TAGGED Movies (${taggedCount}), TAGGED Series (${seriesTaggedCount}), WANTS_TO_WATCH (${wantsToWatch.length})`)
   } catch (err) {
     console.error('Seed error:', err)
   } finally {
