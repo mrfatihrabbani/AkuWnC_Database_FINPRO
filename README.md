@@ -37,7 +37,28 @@ Implementing Database Systems using the Combination of MongoDB & Neo4j
 
 -----------------------------------------------------------
 **Architecture Diagram**
+------------------------
+**MongoDB Diagram**
+<a href="https://ibb.co.com/s9776p4S"><img src="https://i.ibb.co.com/Zz99YRrs/Screenshot-2026-05-23-211547.png" alt="Screenshot-2026-05-23-211547" border="0"></a>
 
+**Neo4j Relationahip Diagram**
+_Follows_
+<a href="https://imgbb.com/"><img src="https://i.ibb.co.com/ymTffgvt/Screenshot-2026-05-23-211610.png" alt="Screenshot 2026 05 23 211610" border="0"></a>
+
+_Rated Users to Movies_
+<a href="https://imgbb.com/"><img src="https://i.ibb.co.com/0v5jXwd/Screenshot-2026-05-23-211618.png" alt="Screenshot 2026 05 23 211618" border="0"></a>
+
+_Rated Users to Series_
+<a href="https://imgbb.com/"><img src="https://i.ibb.co.com/m5nnpP9g/Screenshot-2026-05-23-211628.png" alt="Screenshot 2026 05 23 211628" border="0"></a>
+
+_Tagged Movies to Genre_
+<a href="https://imgbb.com/"><img src="https://i.ibb.co.com/vCZNWyM6/Screenshot-2026-05-23-211644.png" alt="Screenshot 2026 05 23 211644" border="0"></a>
+
+_Tagged Series to Genres_
+<a href="https://imgbb.com/"><img src="https://i.ibb.co.com/ycQwfb2P/Screenshot-2026-05-23-211655.png" alt="Screenshot 2026 05 23 211655" border="0"></a>
+
+_User to Movie or Series Details_
+<a href="https://imgbb.com/"><img src="https://i.ibb.co.com/w3t4Gqv/Screenshot-2026-05-23-211705.png" alt="Screenshot 2026 05 23 211705" border="0"></a>
 
 
 ---------------------------------------------------------------
@@ -82,13 +103,15 @@ About Page
 <a href="https://ibb.co.com/BKjN1N2k"><img src="https://i.ibb.co.com/WpFtTtvC/Whats-App-Image-2026-05-23-at-20-34-05.jpg" alt="Whats-App-Image-2026-05-23-at-20-34-05" border="0"></a>
 
 --------------------------------------------------------------------------------------------------------
+**How to Run**
+
+
+
+--------------------------------------------------------------------------------------------------------
 **References**
 All Movie and Series information are sourced from: https://www.imdb.com/
 All Movies and Series image posters are sourced from: https://www.themoviedb.org/
 
-------------------------------------------------------------------------------------------------------------
-**Deployment Steps**
-...
 
 **Deployment Steps**
 ...
