@@ -9,7 +9,7 @@ The Cinema Warehouse: Your Perfect Movie & Series Enthusiasts App
 **This website is created by:**  
 Mochammad Rafly Fatih Rabbani - 2406369021  
 Ryan Gazendra Irawan - 2406368952  
-Raul Sumaryada - 2406450466  
+Raul Fadila Bagus Sumaryada - 2406450466    
 
 **2026 Copyright. AkuWnC Association®**
 -------------------------------------------------------------
