@@ -27,9 +27,15 @@ TheCinemaWarehouse is a global social network for grass-roots film discussion an
 
 Implementing Database Systems using the Combination of MongoDB & Neo4j
 
+
 <a href="https://ibb.co.com/60PYjtPH"><img src="https://i.ibb.co.com/s9wj81wK/Mongo-DB-Logoo.png" alt="Mongo-DB-Logoo" border="0"></a>
 
 <a href="https://ibb.co.com/CpXvTqSJ"><img src="https://i.ibb.co.com/SD1092ZQ/neo4jlogo.jpg" alt="neo4jlogo" border="0"></a>
+
+**Design Decisions**
+The website application implements Neo4j because the core of the application is build with relationships between users and movies, not just storing data. Features like ratings, comments, and especially movie recommendations depend on how users are connected through shared interests. Neo4j, as a graph database, is optimized for this type of structure, allowing efficient queries such as finding similar users or recommending movies based on connected patterns. This makes it much more suitable than traditional databases for handling multi-step relationships and recommendation logic.
+
+MongoDB is used alongside Neo4j to handle flexible and content-heavy data, such as movie details, user profiles, and longer reviews. It allows fast retrieval of structured and semi-structured data without complex relationships. By combining both, the system benefits from Neo4j’s strength in relationship analysis and MongoDB’s efficiency in data storage, resulting in a more scalable and well-structured application.
 
 --------------------------------------------------------------
 **Project Structure**
