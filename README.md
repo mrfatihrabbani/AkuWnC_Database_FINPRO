@@ -110,6 +110,59 @@ About Page
 
 --------------------------------------------------------------------------------------------------------
 **How to Run**
+------
+**1. Install Dependencies on Both Frontend & Backend Files**
+_Frontend_
+## cd frontend
+## npm install
+
+_Backend_
+## cd backend
+## npm install
+
+**2. Add .env file on both Frontwnd & Backend**
+_frontend/.env_
+## NEXT_PUBLIC_API_URL=http://localhost:3001
+
+_backend/.env_
+## MONGO_URI=mongodb+srv://...
+## NEO4J_URI=neo4j+s://...
+## NEO4J_USER=...
+## NEO4J_PASSWORD=...
+## CLOUDINARY_CLOUD_NAME=...
+## CLOUDINARY_API_KEY=...
+## CLOUDINARY_API_SECRET=...
+
+**3. Seed the Databases**
+## cd backend
+
+_Seed Neo4j_
+## run seed-neo4j
+
+_Seed MongoDB_
+## run seed-mongo
+
+**4. Run on Development**
+_Frontend_
+## cd frontend
+## npm run dev
+
+_Backend_
+## cd backend
+## npm run dev
+
+**TO RUN IN DOCKER**
+1. User are obliged to have the Docker App installed and should be opened.
+2. Run docker on root file with
+
+## docker-compose up --build
+
+3. If done, _Ctrl + C_ to stop the container.
+4. Do:
+   # docker-compose down
+
+   This is to remove the containers completely from local disk and release the used ports (optional, but recommended for clean up).
+
 
 
 
