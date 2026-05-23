@@ -47,6 +47,7 @@ Implementing Database Systems using the Combination of MongoDB & Neo4j
 | Docker     | Database Deployment |
 | MongoDB  | Backend (Basic Features) |
 | Next.js | API & Frontend | 
+| Cloudinary | Saving Avatars |
 
 
 ------------------------------------------------------------- 
