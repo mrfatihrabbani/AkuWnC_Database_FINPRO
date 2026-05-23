@@ -184,8 +184,8 @@ docker-compose down
 
 --------------------------------------------------------------------------------------------------------
 **References**
-All Movie and Series information are sourced from: https://www.imdb.com/
-All Movies and Series image posters are sourced from: https://www.themoviedb.org/
+All Movie and Series information are sourced from: https://www.imdb.com/  
+All Movies and Series image posters are sourced from: https://www.themoviedb.org/  
 
 
 **Deployment Steps**
