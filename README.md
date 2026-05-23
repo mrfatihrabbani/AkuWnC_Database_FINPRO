@@ -36,6 +36,11 @@ Implementing Database Systems using the Combination of MongoDB & Neo4j
 <a href="https://imgbb.com/"><img src="https://i.ibb.co.com/xtGtf1TX/Screenshot-2026-05-23-205904.png" alt="Screenshot 2026 05 23 205904" border="0"></a>
 
 -----------------------------------------------------------
+**Architecture Diagram**
+
+
+
+---------------------------------------------------------------
 
 
 **Tech Platforms**
