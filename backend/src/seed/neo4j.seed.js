@@ -232,16 +232,6 @@ const seriesRatings = [
   ['tester', 'Arcane', 5],
 ]
 
-const wantsToWatch = [
-  ['fatih', 'Blade Runner 2049'],
-  ['ryan', 'Kubo and the Two Strings'],
-  ['tester', 'Sicario'],
-  ['fatih', 'Attack on Titan'],
-  ['rauly', 'Breaking Bad'],
-  ['ryan', 'The Witcher'],
-  ['tester', 'Arcane'],
-]
-
 const follows = [
   ['fatih', 'rauly'],
   ['fatih', 'ryan'],
@@ -346,27 +336,9 @@ async function seed() {
     }
     console.log(`Created ${seriesTaggedCount} TAGGED relationships for Series`)
 
-    for (const [user, title] of wantsToWatch) {
-    const movieResult = await session.run(
-      `MATCH (u:User {username: $user}), (m:Movie {title: $title})
-      CREATE (u)-[:WANTS_TO_WATCH]->(m)
-      RETURN m`,
-      { user, title }
-    )
-    
-    if (movieResult.records.length === 0) {
-      await session.run(
-        `MATCH (u:User {username: $user}), (s:Series {title: $title})
-        CREATE (u)-[:WANTS_TO_WATCH]->(s)`,
-        { user, title }
-      )
-    }
-  }
-    console.log(`Created ${wantsToWatch.length} WANTS_TO_WATCH relationships`)
-
     console.log('\n Neo4j seed complete!')
     console.log(` Total: ${users.length} users, ${movies.length} movies, ${series.length} series, ${genres.length} genres`)
-    console.log(` Relationships: FOLLOWS (${follows.length}), RATED Movies (${ratings.length}), RATED Series (${seriesRatings.length}), TAGGED Movies (${taggedCount}), TAGGED Series (${seriesTaggedCount}), WANTS_TO_WATCH (${wantsToWatch.length})`)
+    console.log(` Relationships: FOLLOWS (${follows.length}), RATED Movies (${ratings.length}), RATED Series (${seriesRatings.length}), TAGGED Movies (${taggedCount}), TAGGED Series (${seriesTaggedCount})`)
   } catch (err) {
     console.error('Seed error:', err)
   } finally {

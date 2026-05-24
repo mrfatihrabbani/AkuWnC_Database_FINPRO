@@ -193,10 +193,6 @@ _Tagged Movies to Genre_
 _Tagged Series to Genres_  
 <a href="https://imgbb.com/"><img src="https://i.ibb.co.com/ycQwfb2P/Screenshot-2026-05-23-211655.png" alt="Screenshot 2026 05 23 211655" border="0"></a>
 
-_User to Movie or Series Details_  
-<a href="https://imgbb.com/"><img src="https://i.ibb.co.com/w3t4Gqv/Screenshot-2026-05-23-211705.png" alt="Screenshot 2026 05 23 211705" border="0"></a>
-
-
 ---------------------------------------------------------------
 
 
