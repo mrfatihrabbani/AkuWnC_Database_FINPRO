@@ -150,7 +150,8 @@ AkuWnC_Database_FINPRO/
 │   │   ├── vercel.svg  
 │   │   └── window.svg  
 │   ├── resource/  
-│   │   └── icon.png  
+│   │   ├── TheCinemaWarehouse_Logo.png  
+|   |   └── TheCinemaWarehouse_Logo_Minimized.png  
 │   ├── .gitignore  
 │   ├── AGENTS.md  
 │   ├── CLAUDE.md  
