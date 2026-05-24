@@ -11,7 +11,7 @@ Mochammad Rafly Fatih Rabbani - 2406369021
 Ryan Gazendra Irawan - 2406368952  
 Raul Fadila Bagus Sumaryada - 2406450466    
 
-**2026 Copyright. AkuWnC Association®**  
+**2026 Copyright. AkuWnC Association®***  
 -------------------------------------------------------------
 
 *Disclaimer: group name is created for aesthetical purpose only. We are no official association group.
@@ -43,7 +43,131 @@ MongoDB is used alongside Neo4j to handle flexible and content-heavy data, such 
 
 --------------------------------------------------------------
 **Project Structure**    
-<a href="https://imgbb.com/"><img src="https://i.ibb.co.com/xtGtf1TX/Screenshot-2026-05-23-205904.png" alt="Screenshot 2026 05 23 205904" border="0"></a>
+
+```text
+AkuWnC_Database_FINPRO/  
+├── backend/  
+│   ├── src/  
+│   │   ├── config/  
+│   │   │   ├── mongo.js  
+│   │   │   └── neo4j.js  
+│   │   ├── controllers/  
+│   │   │   ├── appIngfoController.js  
+│   │   │   ├── authController.js  
+│   │   │   ├── breakdownController.js  
+│   │   │   ├── commentController.js  
+│   │   │   ├── graphController.js  
+│   │   │   ├── movienSeriesController.js  
+│   │   │   ├── notificationController.js  
+│   │   │   ├── reviewController.js  
+│   │   │   ├── userController.js  
+│   │   │   └── watchlistController.js  
+│   │   ├── middleware/  
+│   │   │   └── authMiddleware.js  
+│   │   ├── models/  
+│   │   │   ├── models.mongodb/  
+│   │   │   │   ├── appingfo.model.js  
+│   │   │   │   ├── breakdown.model.js  
+│   │   │   │   ├── comment.model.js  
+│   │   │   │   ├── movienseries.model.js  
+│   │   │   │   ├── notification.model.js  
+│   │   │   │   ├── review.model.js  
+│   │   │   │   ├── user.model.js  
+│   │   │   │   └── watchlist.model.js  
+│   │   │   └── models.neo4j/  
+│   │   │       ├── comment.model.js  
+│   │   │       └── graph.model.js  
+│   │   ├── routes/  
+│   │   │   ├── appIngfoRoute.js  
+│   │   │   ├── authRoute.js  
+│   │   │   ├── breakdownRoute.js  
+│   │   │   ├── commentRoute.js  
+│   │   │   ├── graphRoute.js  
+│   │   │   ├── movienseriesRoute.js  
+│   │   │   ├── notificationRoute.js  
+│   │   │   ├── reviewPageRoute.js  
+│   │   │   ├── userRoute.js  
+│   │   │   └── watchlistRoute.js  
+│   │   ├── seed/  
+│   │   │   ├── mongo.seed.js  
+│   │   │   └── neo4j.seed.js  
+│   │   ├── utils/  
+│   │   │   ├── dateFormatter.js  
+│   │   │   ├── passwordUtils.js  
+│   │   │   ├── responseHandler.js  
+│   │   │   ├── slugify.js  
+│   │   │   └── tokenService.js  
+│   │   └── index.js  
+│   ├── Dockerfile  
+│   ├── package-lock.json  
+│   └── package.json  
+├── benchmarks/  
+│   ├── plots/  
+│   ├── results/  
+│   ├── scripts/  
+│   ├── README.md              # benchmark README file  
+│   ├── package-lock.json  
+│   └── package.json  
+├── docs/  
+│   ├── Neo4j/   
+│   ├── AkuWnC_DataModel(MongoDB).md  
+│   ├── AkuWnC_DataModel(Neo4j).md  
+│   └── MongoDB Diagram.md  
+├── frontend/  
+│   ├── app/  
+│   │   ├── components/  
+│   │   │   ├── AboutPage.tsx  
+│   │   │   ├── BreakdownsPage.tsx  
+│   │   │   ├── EditProfileModal.tsx  
+│   │   │   ├── FilmsPage.tsx  
+│   │   │   ├── FriendsBar.tsx  
+│   │   │   ├── GenreStats.tsx  
+│   │   │   ├── Header.tsx  
+│   │   │   ├── LoginModal.tsx  
+│   │   │   ├── MovieDetailModal.tsx  
+│   │   │   ├── PopularReviews.tsx  
+│   │   │   ├── ProfileMovieModal.tsx  
+│   │   │   ├── ProfilePage.tsx  
+│   │   │   ├── RecommendedMovies.tsx  
+│   │   │   ├── ReviewComments.tsx  
+│   │   │   ├── ReviewsPage.tsx  
+│   │   │   ├── Sidebar.tsx  
+│   │   │   ├── StandoutMovies.tsx  
+│   │   │   └── WatchlistPage.tsx  
+│   │   ├── config/  
+│   │   │   └── api.ts  
+│   │   ├── favicon.ico  
+│   │   ├── globals.css  
+│   │   ├── layout.tsx  
+│   │   └── page.tsx  
+│   ├── public/  
+│   │   ├── file.svg  
+│   │   ├── globe.svg  
+│   │   ├── icon.png  
+│   │   ├── next.svg  
+│   │   ├── prototype.html  
+│   │   ├── styles.css  
+│   │   ├── vercel.svg  
+│   │   └── window.svg  
+│   ├── resource/  
+│   │   └── icon.png  
+│   ├── .gitignore  
+│   ├── AGENTS.md  
+│   ├── CLAUDE.md  
+│   ├── Dockerfile  
+│   ├── README.md              # frontend README file  
+│   ├── eslint.config.mjs  
+│   ├── next.config.ts  
+│   ├── package-lock.json  
+│   ├── package.json  
+│   ├── postcss.config.mjs  
+│   ├── tailwind.config.js  
+│   └── tsconfig.json  
+├── .gitignore  
+├── README.md  
+├── docker-compose.yml  
+└── package-lock.json  
+```  
 
 -----------------------------------------------------------
 **Architecture Diagram**
