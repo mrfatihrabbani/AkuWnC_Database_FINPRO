@@ -36,7 +36,7 @@ Implementing Database Systems using the Combination of MongoDB & Neo4j
 **Design Decisions**    
 The website application implements Neo4j because the core of the application is build with relationships between users and movies, not just storing data. Features like ratings, comments, and especially movie recommendations depend on how users are connected through shared interests. Neo4j, as a graph database, is optimized for this type of structure, allowing efficient queries such as finding similar users or recommending movies based on connected patterns. This makes it much more suitable than traditional databases for handling multi-step relationships and recommendation logic.
 
-MongoDB is used alongside Neo4j to handle flexible and content-heavy data, such as movie details, user profiles, and longer reviews. It allows fast retrieval of structured and semi-structured data without complex relationships. By combining both, the system benefits from Neo4j’s strength in relationship analysis and MongoDB’s efficiency in data storage, resulting in a more scalable and well-structured application.
+MongoDB is used alongside Neo4j to handle flexible and content-heavy data, such as movie details, user profiles, and longer reviews. It allows fast retrieval of structured and semi-structured data without complex relationships. Our team also implements MongoDB Atlas' built-in data modelling feature to visualize our MongoDB schema diagram. By combining both, the system benefits from Neo4j’s strength in relationship analysis and MongoDB’s efficiency in data storage, resulting in a more scalable and well-structured application.
 
 --------------------------------------------------------------
 **Project Structure**    
@@ -46,6 +46,7 @@ MongoDB is used alongside Neo4j to handle flexible and content-heavy data, such 
 **Architecture Diagram**
 ------------------------
 **MongoDB Diagram**  
+Our team implements MongoDB Atlas' built-in data modelling feature to visualize our MongoDB diagram.  
 <a href="https://ibb.co.com/cX1SdN7q"><img src="https://i.ibb.co.com/bRPMnr8t/Mongo-DB-Diagram.png" alt="Mongo-DB-Diagram" border="0"></a>  
   
 **Neo4j Relationahip Diagram**
