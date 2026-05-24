@@ -11,7 +11,8 @@ Mochammad Rafly Fatih Rabbani - 2406369021
 Ryan Gazendra Irawan - 2406368952  
 Raul Fadila Bagus Sumaryada - 2406450466    
 
-**2026 Copyright. AkuWnC Association®**
+**2026 Copyright. AkuWnC Association®**  
+*Disclaimer: group name is created for aesthetical purpose only. We are no official association grou.
 -------------------------------------------------------------
 **Overview**  
 TheCinemaWarehouse is a global social network for grass-roots film discussion and discovery inspired by Letterboxd. We use it as:  
