@@ -176,7 +176,7 @@ AkuWnC_Database_FINPRO/
 Our team implements MongoDB Atlas' built-in data modelling feature to visualize our MongoDB diagram.  
 <a href="https://ibb.co.com/Vp3CmHMn"><img src="https://i.ibb.co.com/HpXPdNGw/Mongo-DB-Diagram.png" alt="Mongo-DB-Diagram" border="0"></a>  
 
-![alt text](MongoDB_Diagram.png)
+![MongoDB Diagram](docs/MongoDB_Diagram.jpg)
   
 **Neo4j Relationahip Diagram**
 _Follows_  
