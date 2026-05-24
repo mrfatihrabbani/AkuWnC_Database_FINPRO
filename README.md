@@ -46,8 +46,8 @@ MongoDB is used alongside Neo4j to handle flexible and content-heavy data, such 
 **Architecture Diagram**
 ------------------------
 **MongoDB Diagram**  
-<a href="https://ibb.co.com/s9776p4S"><img src="https://i.ibb.co.com/Zz99YRrs/Screenshot-2026-05-23-211547.png" alt="Screenshot-2026-05-23-211547" border="0"></a>
-
+<a href="https://ibb.co.com/cX1SdN7q"><img src="https://i.ibb.co.com/bRPMnr8t/Mongo-DB-Diagram.png" alt="Mongo-DB-Diagram" border="0"></a>  
+  
 **Neo4j Relationahip Diagram**
 _Follows_  
 <a href="https://imgbb.com/"><img src="https://i.ibb.co.com/ymTffgvt/Screenshot-2026-05-23-211610.png" alt="Screenshot 2026 05 23 211610" border="0"></a>
