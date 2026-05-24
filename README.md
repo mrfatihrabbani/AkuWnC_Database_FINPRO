@@ -254,7 +254,7 @@ cd backend
 npm install
 ```
 
-**2. Add .env file on both Frontwnd & Backend**   
+**2. Add .env file on both Frontend & Backend**   
 _frontend/.env_
 ``` bash
 NEXT_PUBLIC_API_URL=http://localhost:3001
